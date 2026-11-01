@@ -22,15 +22,25 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Grandmother;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Villager;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.CartPlank;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceHandcart;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture.Type;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Music;
 
 public class SurfaceLevel extends Level {
@@ -61,10 +71,11 @@ public class SurfaceLevel extends Level {
 		int centerY = height() / 2;
 
 		paintHouse(centerX - 10, centerY - 8, 8, 7, centerX - 3, centerY - 4);
-		paintHouse(centerX + 4, centerY - 8, 8, 7, centerX + 4, centerY - 4);
+		// A two-cell lane between the northern houses leads to the well.
+		paintHouse(centerX, centerY - 8, 8, 7, centerX, centerY - 4);
 		paintHouse(centerX - 4, centerY + 4, 9, 7, centerX, centerY + 4);
 		furnishLumberjackHouse(centerX - 10, centerY - 8);
-		furnishNorthEastHouse(centerX + 4, centerY - 8);
+		furnishNorthEastHouse(centerX, centerY - 8);
 		furnishSouthHouse(centerX - 4, centerY + 4);
 		plantTrees(centerX, centerY);
 		decorateYards(centerX, centerY);
@@ -122,7 +133,7 @@ public class SurfaceLevel extends Level {
 		placeExterior(x - 15, y - 6, SurfaceExterior.Type.OAK);
 		placeExterior(x - 12, y - 12, SurfaceExterior.Type.BIRCH);
 		placeExterior(x - 7, y - 12, SurfaceExterior.Type.PINE);
-		placeExterior(x - 2, y - 10, SurfaceExterior.Type.APPLE_TREE);
+		placeExterior(x - 2, y - 13, SurfaceExterior.Type.APPLE_TREE);
 		placeExterior(x + 6, y - 12, SurfaceExterior.Type.OAK);
 		placeExterior(x + 14, y - 8, SurfaceExterior.Type.BIRCH);
 		placeExterior(x + 15, y - 2, SurfaceExterior.Type.PINE);
@@ -137,7 +148,9 @@ public class SurfaceLevel extends Level {
 
 	private void decorateYards(int x, int y) {
 		placeExterior(x, y - 10, SurfaceExterior.Type.WELL);
-		placeExterior(x - 13, y - 3, SurfaceExterior.Type.HANDCART);
+		SurfaceHandcart cart = new SurfaceHandcart(x - 2, y - 6);
+		Painter.fill(this, cart.tileX, cart.tileY, cart.tileW, cart.tileH, Terrain.SURFACE_DECO);
+		customTiles.add(cart);
 		placeExterior(x - 12, y - 5, SurfaceExterior.Type.CHOPPING_BLOCK);
 		placeExterior(x - 8, y, SurfaceExterior.Type.CHOPPING_BLOCK);
 		placeExterior(x + 13, y + 3, SurfaceExterior.Type.HAYSTACK);
@@ -177,27 +190,128 @@ public class SurfaceLevel extends Level {
 		int x = cell % width();
 		int y = cell / width();
 		for (CustomTilemap tile : customTiles) {
-			if (tile instanceof SurfaceExterior
-					&& x >= tile.tileX && x < tile.tileX + tile.tileW
+			if (x >= tile.tileX && x < tile.tileX + tile.tileW
 					&& y >= tile.tileY && y < tile.tileY + tile.tileH) {
-				return ((SurfaceExterior) tile).blocksSight();
+				if (tile instanceof SurfaceHandcart) return false;
+				if (tile instanceof SurfaceExterior) return ((SurfaceExterior) tile).blocksSight();
 			}
 		}
 		return true;
 	}
 
-	@Override
-	protected void createMobs() {
-		for (Mob mob : mobs) {
-			if (mob instanceof Villager) {
-				return;
+	public boolean isWellCell(int cell) {
+		if (cell < 0 || cell >= length() || map[cell] != Terrain.SURFACE_DECO) return false;
+		int x = cell % width();
+		int y = cell / width();
+		for (CustomTilemap tile : customTiles) {
+			if (tile instanceof SurfaceExterior && ((SurfaceExterior) tile).isWell()
+					&& x >= tile.tileX && x < tile.tileX + tile.tileW
+					&& y >= tile.tileY && y < tile.tileY + tile.tileH) {
+				return true;
 			}
 		}
+		return false;
+	}
 
-		// Inside the north-western house, clear of the doorway.
-		Villager villager = new Villager();
-		villager.pos = (height() / 2 - 5) * width() + width() / 2 - 6;
-		mobs.add(villager);
+	public SurfaceHandcart handcart() {
+		for (CustomTilemap tile : customTiles) {
+			if (tile instanceof SurfaceHandcart) return (SurfaceHandcart) tile;
+		}
+		return null;
+	}
+
+	public boolean isHandcartCell(int cell) {
+		SurfaceHandcart cart = handcart();
+		return cell >= 0 && cell < length() && cart != null
+				&& cell / width() == cart.tileY
+				&& cell % width() >= cart.tileX && cell % width() < cart.tileX + cart.tileW;
+	}
+
+	public void interactHandcart(final Hero hero, final int cell) {
+		final SurfaceHandcart cart = handcart();
+		if (!isHandcartCell(cell) || !adjacent(hero.pos, cell)) return;
+		String description;
+		if (cart.isMoved()) {
+			description = "parked";
+		} else {
+			description = cart.isSupported() ? "ready" : "stuck";
+			boolean canSupport = !cart.isSupported() && hero.belongings.getItem(CartPlank.class) != null;
+			GameScene.show(new WndOptions(cart.image(0, 0), Messages.get(SurfaceHandcart.class, "name"),
+					Messages.get(SurfaceHandcart.class, description),
+					Messages.get(SurfaceHandcart.class, canSupport ? "support" : "push"),
+					Messages.get(SurfaceHandcart.class, "later")) {
+				@Override
+				protected void onSelect(int index) {
+					if (index == 0) workOnHandcart(hero, cell);
+				}
+			});
+			return;
+		}
+		GameScene.show(new WndOptions(cart.image(0, 0), Messages.get(SurfaceHandcart.class, "name"),
+				Messages.get(SurfaceHandcart.class, description), Messages.get(SurfaceHandcart.class, "close")));
+	}
+
+	private void workOnHandcart(Hero hero, int cell) {
+		if (Dungeon.level != this || !isHandcartCell(cell)
+				|| !adjacent(hero.pos, cell)) return;
+		SurfaceHandcart cart = handcart();
+		if (cart.isMoved()) return;
+		if (!cart.isSupported()) {
+			CartPlank plank = hero.belongings.getItem(CartPlank.class);
+			if (plank == null) {
+				GLog.w(Messages.get(SurfaceHandcart.class, "no_plank"));
+				return;
+			}
+			plank.detachAll(hero.belongings.backpack);
+			cart.support();
+			GLog.p(Messages.get(SurfaceHandcart.class, "supported"));
+		} else {
+			int targetX = width() / 2 - 4;
+			int targetY = height() / 2 - 10;
+			// Never move the cart onto a character or an item left on its parking spot.
+			for (int x = targetX; x < targetX + cart.tileW; x++) {
+				int target = targetY * width() + x;
+				if (!passable[target] || Actor.findChar(target) != null || heaps.get(target) != null) {
+					GLog.w(Messages.get(SurfaceHandcart.class, "blocked"));
+					return;
+				}
+			}
+			int oldCell = cart.tileY * width() + cart.tileX;
+			cart.moveTo(targetX, targetY);
+			for (int i = 0; i < cart.tileW; i++) {
+				Level.set(oldCell + i, Terrain.EMPTY, this);
+				Level.set(targetY * width() + targetX + i, Terrain.SURFACE_DECO, this);
+			}
+			GLog.p(Messages.get(SurfaceHandcart.class, "moved"));
+		}
+		GameScene.updateMap();
+		Dungeon.observe();
+		hero.busy();
+		hero.sprite.operate(cell);
+		hero.spend(1f);
+	}
+
+	@Override
+	protected void createMobs() {
+		boolean hasVillager = false;
+		boolean hasGrandmother = false;
+		for (Mob mob : mobs) {
+			if (mob instanceof Villager) hasVillager = true;
+			if (mob instanceof Grandmother) hasGrandmother = true;
+		}
+
+		if (!hasVillager) {
+			// Inside the north-western house, clear of the doorway.
+			Villager villager = new Villager();
+			villager.pos = (height() / 2 - 5) * width() + width() / 2 - 6;
+			mobs.add(villager);
+		}
+		if (!hasGrandmother) {
+			// West of the stove in the southern house, clear of its entrance.
+			Grandmother grandmother = new Grandmother();
+			grandmother.pos = (height() / 2 + 5) * width() + width() / 2 + 2;
+			mobs.add(grandmother);
+		}
 	}
 
 	@Override
@@ -212,6 +326,8 @@ public class SurfaceLevel extends Level {
 
 	@Override
 	protected void createItems() {
+		// An ordinary unlocked chest against the eastern wall of the right-hand house.
+		drop(new CartPlank(), (height() / 2 - 5) * width() + width() / 2 + 6).type = Heap.Type.CHEST;
 	}
 
 }

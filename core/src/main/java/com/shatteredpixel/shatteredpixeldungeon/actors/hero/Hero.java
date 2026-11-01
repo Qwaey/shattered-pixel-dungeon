@@ -120,6 +120,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfMight;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfDivineInspiration;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.Bucket;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.DarkGold;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.DwarfToken;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.EscapeCrystal;
@@ -154,6 +155,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.VaultLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
@@ -921,6 +923,12 @@ public class Hero extends Char {
 				
 			} else if (curAction instanceof HeroAction.Alchemy) {
 				actResult = actAlchemy( (HeroAction.Alchemy)curAction );
+
+			} else if (curAction instanceof HeroAction.FillBucket) {
+				actResult = actFillBucket((HeroAction.FillBucket) curAction);
+
+			} else if (curAction instanceof HeroAction.Handcart) {
+				actResult = actHandcart((HeroAction.Handcart) curAction);
 				
 			} else {
 				actResult = false;
@@ -1075,6 +1083,56 @@ public class Hero extends Char {
 
 			return true;
 
+		} else {
+			ready();
+			return false;
+		}
+	}
+
+	private boolean actFillBucket(HeroAction.FillBucket action) {
+		if (!(Dungeon.level instanceof SurfaceLevel)
+				|| !((SurfaceLevel) Dungeon.level).isWellCell(action.dst)) {
+			ready();
+			return false;
+		}
+		if (Dungeon.level.adjacent(pos, action.dst)) {
+			ready();
+			Bucket bucket = belongings.getItem(Bucket.class);
+			if (bucket == null) {
+				GLog.i(Messages.get(Bucket.class, "no_bucket"));
+			} else if (bucket.isFilled()) {
+				GLog.i(Messages.get(Bucket.class, "already_full"));
+			} else {
+				bucket.fill(this, action.dst);
+			}
+			return false;
+		} else if (getCloser(action.dst)) {
+			return true;
+		} else {
+			ready();
+			return false;
+		}
+	}
+
+	private boolean actHandcart(final HeroAction.Handcart action) {
+		if (!(Dungeon.level instanceof SurfaceLevel)
+				|| !((SurfaceLevel) Dungeon.level).isHandcartCell(action.dst)) {
+			ready();
+			return false;
+		}
+		if (Dungeon.level.adjacent(pos, action.dst)) {
+			ready();
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					if (Dungeon.level instanceof SurfaceLevel) {
+						((SurfaceLevel) Dungeon.level).interactHandcart(Hero.this, action.dst);
+					}
+				}
+			});
+			return false;
+		} else if (getCloser(action.dst)) {
+			return true;
 		} else {
 			ready();
 			return false;
@@ -1940,7 +1998,19 @@ public class Hero extends Char {
 		Char ch = Actor.findChar( cell );
 		Heap heap = Dungeon.level.heaps.get( cell );
 
-		if (Dungeon.level.map[cell] == Terrain.ALCHEMY && cell != pos) {
+		if (Dungeon.level instanceof SurfaceLevel
+				&& ((SurfaceLevel) Dungeon.level).isWellCell(cell)
+				&& (Dungeon.level.visited[cell] || Dungeon.level.mapped[cell])) {
+
+			curAction = new HeroAction.FillBucket(cell);
+
+		} else if (Dungeon.level instanceof SurfaceLevel
+				&& ((SurfaceLevel) Dungeon.level).isHandcartCell(cell)
+				&& (Dungeon.level.visited[cell] || Dungeon.level.mapped[cell])) {
+
+			curAction = new HeroAction.Handcart(cell);
+
+		} else if (Dungeon.level.map[cell] == Terrain.ALCHEMY && cell != pos) {
 			
 			curAction = new HeroAction.Alchemy( cell );
 			

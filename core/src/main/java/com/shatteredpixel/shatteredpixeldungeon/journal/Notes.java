@@ -48,6 +48,8 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BlacksmithSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.GrandmotherSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.LumberjackSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ImpSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -138,6 +140,8 @@ public class Notes {
 		WANDMAKER,
 		TROLL,
 		IMP,
+		GRANDMOTHER,
+		HANDCART,
 
 		DEMON_SPAWNER;
 	}
@@ -202,6 +206,10 @@ public class Notes {
 					return new Image(new RatKingSprite());
 				case WANDMAKER:
 					return new Image(new WandmakerSprite());
+				case GRANDMOTHER:
+					return new Image(new GrandmotherSprite());
+				case HANDCART:
+					return new Image(new LumberjackSprite());
 				case TROLL:
 					return new Image(new BlacksmithSprite());
 				case IMP:
@@ -261,6 +269,8 @@ public class Notes {
 				case WANDMAKER:     return Messages.get(Wandmaker.class, "desc");
 				case TROLL:         return Messages.get(Blacksmith.class, "desc");
 				case IMP:           return Messages.get(Imp.class, "desc");
+				case GRANDMOTHER:   return Messages.get(Landmark.class, "grandmother_desc");
+				case HANDCART:      return Messages.get(Landmark.class, "handcart_desc");
 
 				case DEMON_SPAWNER: return Messages.get(DemonSpawner.class, "desc");
 			}

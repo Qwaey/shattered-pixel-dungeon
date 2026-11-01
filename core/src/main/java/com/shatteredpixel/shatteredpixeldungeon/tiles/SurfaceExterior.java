@@ -69,6 +69,10 @@ public class SurfaceExterior extends CustomTilemap {
 		return type != Type.WELL && type != Type.HANDCART && type != Type.CHOPPING_BLOCK;
 	}
 
+	public boolean isWell() {
+		return type == Type.WELL && !canopy;
+	}
+
 	@Override
 	public Tilemap create() {
 		Tilemap v = super.create();

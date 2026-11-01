@@ -148,6 +148,10 @@ public abstract class CustomTilemap implements Bundlable {
 		return null;
 	}
 
+	// Called only when the player opens this tile's examination window.
+	public void onExamine(int tileX, int tileY) {
+	}
+
 	private static final String TILE_X  = "tileX";
 	private static final String TILE_Y  = "tileY";
 

@@ -24,9 +24,11 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.LumberjackSprite;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceHandcart;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Callback;
@@ -72,9 +74,18 @@ public class Villager extends NPC {
 		});
 	}
 
+	private SurfaceHandcart handcart() {
+		return Dungeon.level instanceof SurfaceLevel ? ((SurfaceLevel) Dungeon.level).handcart() : null;
+	}
+
 	private void showReply(String topic) {
+		String reply = Messages.get(this, topic);
+		SurfaceHandcart cart = handcart();
+		if (cart != null && !cart.isMoved()) {
+			reply += "\n\n" + Messages.get(this, topic + "_cart");
+		}
 		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
-				Messages.get(this, topic),
+				reply,
 				Messages.get(this, "back"),
 				Messages.get(this, "goodbye")) {
 			@Override

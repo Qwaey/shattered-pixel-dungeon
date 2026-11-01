@@ -81,6 +81,18 @@ public class HeroAction {
 			this.dst = pot;
 		}
 	}
+
+	public static class FillBucket extends HeroAction {
+		public FillBucket(int well) {
+			this.dst = well;
+		}
+	}
+
+	public static class Handcart extends HeroAction {
+		public Handcart(int cart) {
+			this.dst = cart;
+		}
+	}
 	
 	public static class Attack extends HeroAction {
 		public Char target;

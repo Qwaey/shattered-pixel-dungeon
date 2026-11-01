@@ -155,6 +155,7 @@ public class WndInfoCell extends Window {
 		titlebar.label(cellName(cell));
 
 		if (customTile != null){
+			customTile.onExamine(x, y);
 			String customDesc = customTile.desc(x, y);
 			if (customDesc != null) {
 				desc += customDesc;
