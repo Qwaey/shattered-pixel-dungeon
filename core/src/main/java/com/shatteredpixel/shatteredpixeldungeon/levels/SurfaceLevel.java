@@ -30,11 +30,11 @@ import com.watabou.noosa.audio.Music;
 
 public class SurfaceLevel extends Level {
 
-	private static final int SIZE = 17;
+	private static final int SIZE = 256;
 
 	@Override
 	public String tilesTex() {
-		return Assets.Environment.TILES_SEWERS;
+		return Assets.Environment.TILES_SURFACE;
 	}
 
 	@Override

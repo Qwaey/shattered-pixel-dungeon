@@ -37,6 +37,8 @@ public class Quad {
 	public static final short[] VALUES = {0, 1, 2, 0, 2, 3};
 	
 	public static final int SIZE = VALUES.length;
+	//Four vertices per quad must fit in unsigned 16-bit indices.
+	public static final int MAX_QUADS = (1 << 16) / 4;
 	
 	private static ShortBuffer indices;
 	private static int indexSize = 0;
@@ -56,9 +58,9 @@ public class Quad {
 			asFloatBuffer();
 	}
 
-	//sets up for drawing up to 32k quads in one command, shouldn't ever need to exceed this
+	//Larger sets are drawn in batches using the same indices.
 	public static void setupIndices(){
-		ShortBuffer indices = getIndices( Short.MAX_VALUE );
+		ShortBuffer indices = getIndices( MAX_QUADS );
 		if (bufferIndex == -1){
 			bufferIndex = Gdx.gl.glGenBuffer();
 		}

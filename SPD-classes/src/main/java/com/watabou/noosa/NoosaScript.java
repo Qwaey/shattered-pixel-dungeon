@@ -136,12 +136,19 @@ public class NoosaScript extends Script {
 
 		buffer.bind();
 
-		aXY.vertexBuffer( 2, 4, 0 );
-		aUV.vertexBuffer( 2, 4, 2 );
+		//Advance the vertex pointers so each batch can reuse 16-bit indices.
+		while (length > 0) {
+			int batchLength = Math.min(length, Quad.MAX_QUADS);
+			aXY.vertexBuffer( 2, 4, offset * 16 );
+			aUV.vertexBuffer( 2, 4, offset * 16 + 2 );
+
+			Gdx.gl20.glDrawElements( Gdx.gl20.GL_TRIANGLES, Quad.SIZE * batchLength, Gdx.gl20.GL_UNSIGNED_SHORT, 0 );
+
+			offset += batchLength;
+			length -= batchLength;
+		}
 
 		buffer.release();
-		
-		Gdx.gl20.glDrawElements( Gdx.gl20.GL_TRIANGLES, Quad.SIZE * length, Gdx.gl20.GL_UNSIGNED_SHORT, Quad.SIZE * Short.SIZE/8 * offset );
 	}
 	
 	public void lighting( float rm, float gm, float bm, float am, float ra, float ga, float ba, float aa ) {
