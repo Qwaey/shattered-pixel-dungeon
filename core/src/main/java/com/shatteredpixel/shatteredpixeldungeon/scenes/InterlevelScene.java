@@ -164,7 +164,7 @@ public class InterlevelScene extends PixelScene {
 		}
 
 		//flush the texture cache whenever moving between regions, helps reduce memory load
-		int region = (int)Math.ceil(loadingDepth / 5f);
+		int region = Math.max(1, (int)Math.ceil(loadingDepth / 5f));
 		if (region != lastRegion){
 			TextureCache.clear();
 			TitleBackground.reset();
