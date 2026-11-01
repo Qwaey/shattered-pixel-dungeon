@@ -30,7 +30,7 @@ import com.watabou.noosa.audio.Music;
 
 public class SurfaceLevel extends Level {
 
-	private static final int SIZE = 256;
+	private static final int SIZE = 100;
 
 	@Override
 	public String tilesTex() {
@@ -52,11 +52,24 @@ public class SurfaceLevel extends Level {
 		setSize(SIZE, SIZE);
 		Painter.fill(this, 1, 1, SIZE - 2, SIZE - 2, Terrain.EMPTY);
 
-		int stairs = (SIZE / 2) * width() + SIZE / 2;
+		int centerX = width() / 2;
+		int centerY = height() / 2;
+
+		paintHouse(centerX - 10, centerY - 8, 8, 7, centerX - 3, centerY - 4);
+		paintHouse(centerX + 4, centerY - 8, 8, 7, centerX + 4, centerY - 4);
+		paintHouse(centerX - 4, centerY + 4, 9, 7, centerX, centerY + 4);
+
+		int stairs = centerY * width() + centerX;
 		map[stairs] = Terrain.EXIT;
 		transitions.add(new LevelTransition(this, stairs,
 				LevelTransition.Type.REGULAR_EXIT, 1, 0, LevelTransition.Type.SURFACE));
 		return true;
+	}
+
+	private void paintHouse(int x, int y, int w, int h, int doorX, int doorY) {
+		Painter.fill(this, x, y, w, h, Terrain.WALL);
+		Painter.fill(this, x + 1, y + 1, w - 2, h - 2, Terrain.EMPTY_SP);
+		Painter.set(this, doorX, doorY, Terrain.DOOR);
 	}
 
 	@Override
