@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.tiles;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.watabou.noosa.Image;
 import com.watabou.utils.PathFinder;
@@ -43,6 +44,10 @@ public class DungeonTerrainTilemap extends DungeonTilemap {
 	protected int getTileVisual(int pos, int tile, boolean flat) {
 		int visual = DungeonTileSheet.directVisuals.get(tile, -1);
 		if (visual != -1) {
+			if (Dungeon.level instanceof SurfaceLevel
+					&& (tile == Terrain.EMPTY || tile == Terrain.SURFACE_DECO)) {
+				return SurfaceFloorTiles.getVisual(pos, mapWidth, Dungeon.level.height());
+			}
 			if (visual == DungeonTileSheet.FLOOR_DECO && Dungeon.level instanceof MiningLevel) {
 				for (int i : PathFinder.NEIGHBOURS4) {
 					if (map[pos + i] == Terrain.MINE_BOULDER) {
