@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Villager;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.watabou.noosa.audio.Music;
@@ -74,6 +75,16 @@ public class SurfaceLevel extends Level {
 
 	@Override
 	protected void createMobs() {
+		for (Mob mob : mobs) {
+			if (mob instanceof Villager) {
+				return;
+			}
+		}
+
+		// Inside the north-western house, clear of the doorway.
+		Villager villager = new Villager();
+		villager.pos = (height() / 2 - 5) * width() + width() / 2 - 6;
+		mobs.add(villager);
 	}
 
 	@Override
