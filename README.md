@@ -1,4 +1,22 @@
-# Shattered Pixel Dungeon
+# Сюжетная RPG на базе Shattered Pixel Dungeon
+
+Автор создаёт новую самостоятельную игру на базе открытого исходного кода
+Shattered Pixel Dungeon. Цель — RPG с открытым миром, множеством квестов,
+цельной историей и новыми противниками. События продолжают приключения героя
+после того, как он вынес амулет на поверхность. Базовый геймплей оригинала
+сохраняется, а случайное наполнение мира заменяется заранее продуманными
+локациями, наградами и игровыми ситуациями. Старые сохранения не поддерживаются.
+Подземельные уровни и ненужные механики оригинала будут постепенно удаляться.
+Это замысел проекта; текущий статус реализации описан в документации ниже.
+
+- [Инструкции для ИИ-агентов](AGENTS.md)
+- [Цель, решения и текущий контекст проекта](docs/PROJECT_CONTEXT.md)
+- [FAQ для ИИ-агентов](docs/AI_FAQ.md)
+
+## Исходный проект: Shattered Pixel Dungeon
+
+Ниже сохранено описание исходного проекта. Официальные ссылки, релизы и правила
+исходного репозитория в этом разделе относятся к оригинальному Shattered Pixel Dungeon.
 
 [Shattered Pixel Dungeon](https://shatteredpixel.com/shatteredpd/) is an open-source traditional roguelike dungeon crawler with randomized levels and enemies, and hundreds of items to collect and use. It's based on the [source code of Pixel Dungeon](https://github.com/00-Evan/pixel-dungeon-gradle), by [Watabou](https://watabou.itch.io/).
 
