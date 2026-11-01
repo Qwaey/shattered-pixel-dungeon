@@ -40,6 +40,8 @@ public class Assets {
 		public static final String OCCLUSION_SHADOWS    = "environment/occlusion_shadows.png";
 
 		public static final String TILES_SURFACE = "environment/tiles_surface.png";
+		public static final String SURFACE_FURNITURE = "environment/custom_tiles/surface_furniture.png";
+		public static final String SURFACE_EXTERIOR = "environment/custom_tiles/surface_exterior.png";
 		public static final String TILES_SEWERS = "environment/tiles_sewers.png";
 		public static final String TILES_PRISON = "environment/tiles_prison.png";
 		public static final String TILES_CAVES  = "environment/tiles_caves.png";

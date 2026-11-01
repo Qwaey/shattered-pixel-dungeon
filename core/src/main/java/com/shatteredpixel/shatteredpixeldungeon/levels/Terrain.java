@@ -60,6 +60,7 @@ public class Terrain {
 	//solid environment decorations
 	public static final int CUSTOM_DECO	    = 23; //invisible decoration that will also be a custom visual, re-uses the old terrain ID for signs
 	public static final int CUSTOM_DECO_WTR = 39; //invisible decoration that needs water-passthrough, not floor
+	public static final int SURFACE_DECO    = 40; //solid outdoor decoration that also blocks sight
 	public static final int STATUE			= 25;
 	public static final int STATUE_SP		= 26;
 	//These decorations are environment-specific
@@ -118,6 +119,7 @@ public class Terrain {
 		flags[CUSTOM_DECO_EMPTY] = flags[EMPTY];
 		flags[CUSTOM_DECO] = SOLID;
 		flags[CUSTOM_DECO_WTR] = SOLID;
+		flags[SURFACE_DECO] = SOLID | LOS_BLOCKING;
 		flags[STATUE] = SOLID;
 		flags[STATUE_SP] = flags[STATUE];
 
