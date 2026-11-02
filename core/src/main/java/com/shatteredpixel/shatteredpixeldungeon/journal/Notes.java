@@ -50,6 +50,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.BlacksmithSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GrandmotherSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.LumberjackSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.MironSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ImpSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -142,6 +143,10 @@ public class Notes {
 		IMP,
 		GRANDMOTHER,
 		HANDCART,
+		HAY_FIELD,
+		HAY_EGGS,
+		HAY_DELIVERY,
+		HAY_REWARD,
 
 		DEMON_SPAWNER;
 	}
@@ -210,6 +215,11 @@ public class Notes {
 					return new Image(new GrandmotherSprite());
 				case HANDCART:
 					return new Image(new LumberjackSprite());
+				case HAY_FIELD:
+				case HAY_EGGS:
+				case HAY_DELIVERY:
+				case HAY_REWARD:
+					return new Image(new MironSprite());
 				case TROLL:
 					return new Image(new BlacksmithSprite());
 				case IMP:
@@ -271,6 +281,11 @@ public class Notes {
 				case IMP:           return Messages.get(Imp.class, "desc");
 				case GRANDMOTHER:   return Messages.get(Landmark.class, "grandmother_desc");
 				case HANDCART:      return Messages.get(Landmark.class, "handcart_desc");
+				case HAY_FIELD:
+				case HAY_EGGS:
+				case HAY_DELIVERY:
+				case HAY_REWARD:
+					return Messages.get(Landmark.class, landmark.name() + "_desc");
 
 				case DEMON_SPAWNER: return Messages.get(DemonSpawner.class, "desc");
 			}

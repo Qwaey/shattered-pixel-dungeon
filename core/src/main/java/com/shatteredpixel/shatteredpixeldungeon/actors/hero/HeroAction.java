@@ -93,6 +93,12 @@ public class HeroAction {
 			this.dst = cart;
 		}
 	}
+
+	public static class HayQuest extends HeroAction {
+		public HayQuest(int cell) {
+			this.dst = cell;
+		}
+	}
 	
 	public static class Attack extends HeroAction {
 		public Char target;

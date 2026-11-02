@@ -27,10 +27,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Grandmother;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Miron;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Villager;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.CartPlank;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.HayQuest;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceCobweb;
@@ -44,8 +46,27 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Music;
+import com.watabou.utils.Bundle;
 
 public class SurfaceLevel extends Level {
+
+	private HayQuest hayQuest;
+
+	public HayQuest hayQuest() {
+		return hayQuest;
+	}
+
+	@Override
+	public void storeInBundle(Bundle bundle) {
+		super.storeInBundle(bundle);
+		if (hayQuest != null) bundle.put("hay_quest", hayQuest);
+	}
+
+	@Override
+	public void restoreFromBundle(Bundle bundle) {
+		super.restoreFromBundle(bundle);
+		hayQuest = (HayQuest) bundle.get("hay_quest");
+	}
 
 	@Override
 	public String tilesTex() {
@@ -86,6 +107,8 @@ public class SurfaceLevel extends Level {
 		furnishSouthHouse(centerX - 4, centerY + 4);
 		plantTrees(centerX, centerY);
 		decorateYards(centerX, centerY);
+		hayQuest = new HayQuest();
+		hayQuest.decorate(this);
 
 		int stairs = (barnY + 4) * width() + barnX + 3;
 		map[stairs] = Terrain.EXIT;
@@ -328,9 +351,11 @@ public class SurfaceLevel extends Level {
 	protected void createMobs() {
 		boolean hasVillager = false;
 		boolean hasGrandmother = false;
+		boolean hasMiron = false;
 		for (Mob mob : mobs) {
 			if (mob instanceof Villager) hasVillager = true;
 			if (mob instanceof Grandmother) hasGrandmother = true;
+			if (mob instanceof Miron) hasMiron = true;
 		}
 
 		if (!hasVillager) {
@@ -344,6 +369,11 @@ public class SurfaceLevel extends Level {
 			Grandmother grandmother = new Grandmother();
 			grandmother.pos = (height() / 2 + 5) * width() + width() / 2 + 2;
 			mobs.add(grandmother);
+		}
+		if (hayQuest != null && !hasMiron) {
+			Miron miron = new Miron();
+			miron.pos = 28 * width() + 47;
+			mobs.add(miron);
 		}
 	}
 

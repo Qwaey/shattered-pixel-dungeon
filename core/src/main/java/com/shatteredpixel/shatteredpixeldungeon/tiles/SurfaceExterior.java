@@ -22,6 +22,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.tiles;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.HayQuest;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.Tilemap;
@@ -100,6 +103,11 @@ public class SurfaceExterior extends CustomTilemap {
 
 	@Override
 	public String desc(int tileX, int tileY) {
+		if (type == Type.HAYSTACK && !canopy && Dungeon.level instanceof SurfaceLevel) {
+			HayQuest quest = ((SurfaceLevel) Dungeon.level).hayQuest();
+			String description = quest == null ? null : quest.stackDesc(this.tileX, this.tileY);
+			if (description != null) return description;
+		}
 		return Messages.get(this, type.name() + "_desc");
 	}
 

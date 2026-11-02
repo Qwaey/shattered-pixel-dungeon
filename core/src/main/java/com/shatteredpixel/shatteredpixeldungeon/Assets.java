@@ -44,6 +44,7 @@ public class Assets {
 		public static final String SURFACE_EXTERIOR = "environment/custom_tiles/surface_exterior.png";
 		public static final String SURFACE_HANDCART = "environment/custom_tiles/surface_handcart.png";
 		public static final String SURFACE_COBWEBS = "environment/custom_tiles/surface_cobwebs.png";
+		public static final String HAY_QUEST = "environment/custom_tiles/hay_quest.png";
 		public static final String TILES_SEWERS = "environment/tiles_sewers.png";
 		public static final String TILES_PRISON = "environment/tiles_prison.png";
 		public static final String TILES_CAVES  = "environment/tiles_caves.png";
@@ -305,6 +306,8 @@ public class Assets {
 		public static final String KEEPER   = "sprites/shopkeeper.png";
 		public static final String LUMBERJACK = "sprites/lumberjack.png";
 		public static final String GRANDMOTHER = "sprites/grandmother.png";
+		public static final String MIRON = "sprites/miron.png";
+		public static final String SENOGRYZ = "sprites/senogryz.png";
 		public static final String BAT      = "sprites/bat.png";
 		public static final String ELEMENTAL= "sprites/elemental.png";
 		public static final String MONK     = "sprites/monk.png";

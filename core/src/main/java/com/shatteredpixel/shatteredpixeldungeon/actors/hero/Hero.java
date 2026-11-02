@@ -929,6 +929,9 @@ public class Hero extends Char {
 
 			} else if (curAction instanceof HeroAction.Handcart) {
 				actResult = actHandcart((HeroAction.Handcart) curAction);
+
+			} else if (curAction instanceof HeroAction.HayQuest) {
+				actResult = actHayQuest((HeroAction.HayQuest) curAction);
 				
 			} else {
 				actResult = false;
@@ -1127,6 +1130,33 @@ public class Hero extends Char {
 				public void call() {
 					if (Dungeon.level instanceof SurfaceLevel) {
 						((SurfaceLevel) Dungeon.level).interactHandcart(Hero.this, action.dst);
+					}
+				}
+			});
+			return false;
+		} else if (getCloser(action.dst)) {
+			return true;
+		} else {
+			ready();
+			return false;
+		}
+	}
+
+	private boolean actHayQuest(final HeroAction.HayQuest action) {
+		if (!(Dungeon.level instanceof SurfaceLevel)
+				|| ((SurfaceLevel) Dungeon.level).hayQuest() == null
+				|| !((SurfaceLevel) Dungeon.level).hayQuest().isInteractionCell(action.dst)) {
+			ready();
+			return false;
+		}
+		if (pos == action.dst || Dungeon.level.adjacent(pos, action.dst)) {
+			ready();
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					if (Dungeon.level instanceof SurfaceLevel
+							&& ((SurfaceLevel) Dungeon.level).hayQuest() != null) {
+						((SurfaceLevel) Dungeon.level).hayQuest().interact(Hero.this, action.dst);
 					}
 				}
 			});
@@ -2009,6 +2039,14 @@ public class Hero extends Char {
 				&& (Dungeon.level.visited[cell] || Dungeon.level.mapped[cell])) {
 
 			curAction = new HeroAction.Handcart(cell);
+
+		} else if (Dungeon.level instanceof SurfaceLevel
+				&& ((SurfaceLevel) Dungeon.level).hayQuest() != null
+				&& ((SurfaceLevel) Dungeon.level).hayQuest().isInteractionCell(cell)
+				&& (ch == null || ch == this) && heap == null
+				&& (Dungeon.level.visited[cell] || Dungeon.level.mapped[cell])) {
+
+			curAction = new HeroAction.HayQuest(cell);
 
 		} else if (Dungeon.level.map[cell] == Terrain.ALCHEMY && cell != pos) {
 			

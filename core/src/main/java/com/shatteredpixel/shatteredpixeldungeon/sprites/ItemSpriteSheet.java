@@ -772,6 +772,9 @@ public class ItemSpriteSheet {
 	public static final int BUCKET = QUEST+11;
 	public static final int WATER_BUCKET = QUEST+12;
 	public static final int CART_PLANK = QUEST+13;
+	public static final int HAY_RAKE = QUEST+14;
+	public static final int EGG_BOX = QUEST+15;
+	public static final int EMPTY_EGG_BOX = QUEST;
 	static{
 		assignItemRect(DUST,    12, 11);
 		assignItemRect(CANDLE,  12, 12);
@@ -786,6 +789,9 @@ public class ItemSpriteSheet {
 		assignItemRect(BUCKET,  11, 14);
 		assignItemRect(WATER_BUCKET, 11, 14);
 		assignItemRect(CART_PLANK, 14, 12);
+		assignItemRect(HAY_RAKE, 16, 16);
+		assignItemRect(EGG_BOX, 16, 16);
+		assignItemRect(EMPTY_EGG_BOX, 16, 16);
 	}
 
 	private static final int BAGS       =                                   xy(1, 31);  //16 slots
