@@ -68,6 +68,12 @@ public class SurfaceFloorTiles {
 	// Positions are relative to the surface's centre, like the houses and trees.
 	// Spaces leave the meadow underneath; dots deliberately keep plain grass.
 	private static final Patch[] PATCHES = {
+			// A faint old track from the barn's eastern door towards the village square.
+			new Patch(-17, -2,
+					"dd.dp.   ",
+					" ..dd.   ",
+					"  .pdddd.",
+					"    ..d.."),
 			// Worn ground around the well, through the lane, and towards the doors.
 			new Patch(-5, -11,
 					"..p..d..p..",

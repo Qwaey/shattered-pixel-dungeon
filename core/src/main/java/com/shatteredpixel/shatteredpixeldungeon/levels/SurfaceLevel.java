@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.quest.CartPlank;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceCobweb;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceHandcart;
@@ -70,6 +71,12 @@ public class SurfaceLevel extends Level {
 		int centerX = width() / 2;
 		int centerY = height() / 2;
 
+		// The dungeon opens into an abandoned barn west of the village.
+		int barnX = centerX - 26;
+		int barnY = centerY - 6;
+		paintHouse(barnX, barnY, 10, 9, barnX + 9, barnY + 4);
+		furnishBarn(barnX, barnY);
+
 		paintHouse(centerX - 10, centerY - 8, 8, 7, centerX - 3, centerY - 4);
 		// A two-cell lane between the northern houses leads to the well.
 		paintHouse(centerX, centerY - 8, 8, 7, centerX, centerY - 4);
@@ -80,7 +87,7 @@ public class SurfaceLevel extends Level {
 		plantTrees(centerX, centerY);
 		decorateYards(centerX, centerY);
 
-		int stairs = centerY * width() + centerX;
+		int stairs = (barnY + 4) * width() + barnX + 3;
 		map[stairs] = Terrain.EXIT;
 		transitions.add(new LevelTransition(this, stairs,
 				LevelTransition.Type.REGULAR_EXIT, 1, 0, LevelTransition.Type.SURFACE));
@@ -91,6 +98,24 @@ public class SurfaceLevel extends Level {
 		Painter.fill(this, x, y, w, h, Terrain.WALL);
 		Painter.fill(this, x + 1, y + 1, w - 2, h - 2, Terrain.EMPTY_SP);
 		Painter.set(this, doorX, doorY, Terrain.DOOR);
+	}
+
+	private void furnishBarn(int x, int y) {
+		// Original storage barrels with wooden flooring and their standard overhangs.
+		Painter.set(this, x + 1, y + 2, Terrain.REGION_DECO_ALT);
+		Painter.set(this, x + 2, y + 2, Terrain.REGION_DECO_ALT);
+		Painter.set(this, x + 7, y + 2, Terrain.REGION_DECO_ALT);
+		Painter.set(this, x + 8, y + 2, Terrain.REGION_DECO_ALT);
+		placeFurniture(x + 4, y + 1, Type.CUPBOARD, true);
+		placeFurniture(x + 5, y + 1, Type.FIREWOOD, true);
+		placeFurniture(x + 1, y + 6, Type.FIREWOOD, true);
+		placeFurniture(x + 6, y + 6, Type.TABLE, true);
+		placeFurniture(x + 5, y + 6, Type.STOOL, true);
+		// Decorative overlays preserve the wooden floor and never entangle the hero.
+		customTiles.add(new SurfaceCobweb(x + 1, y + 1, SurfaceCobweb.Corner.NORTH_WEST));
+		customTiles.add(new SurfaceCobweb(x + 8, y + 1, SurfaceCobweb.Corner.NORTH_EAST));
+		customTiles.add(new SurfaceCobweb(x + 1, y + 7, SurfaceCobweb.Corner.SOUTH_WEST));
+		customTiles.add(new SurfaceCobweb(x + 8, y + 7, SurfaceCobweb.Corner.SOUTH_EAST));
 	}
 
 	private void furnishLumberjackHouse(int x, int y) {
@@ -124,7 +149,11 @@ public class SurfaceLevel extends Level {
 	}
 
 	private void placeFurniture(int x, int y, Type type) {
-		SurfaceFurniture furniture = new SurfaceFurniture(type, x, y);
+		placeFurniture(x, y, type, false);
+	}
+
+	private void placeFurniture(int x, int y, Type type, boolean abandoned) {
+		SurfaceFurniture furniture = new SurfaceFurniture(type, x, y, abandoned);
 		Painter.fill(this, x, y, furniture.tileW, furniture.tileH, Terrain.CUSTOM_DECO);
 		customTiles.add(furniture);
 	}
@@ -328,6 +357,18 @@ public class SurfaceLevel extends Level {
 	protected void createItems() {
 		// An ordinary unlocked chest against the eastern wall of the right-hand house.
 		drop(new CartPlank(), (height() / 2 - 5) * width() + width() / 2 + 6).type = Heap.Type.CHEST;
+	}
+
+	@Override
+	public String tileName(int tile) {
+		if (tile == Terrain.REGION_DECO_ALT) return Messages.get(this, "region_deco_name");
+		return super.tileName(tile);
+	}
+
+	@Override
+	public String tileDesc(int tile) {
+		if (tile == Terrain.REGION_DECO_ALT) return Messages.get(this, "region_deco_desc");
+		return super.tileDesc(tile);
 	}
 
 }

@@ -36,6 +36,7 @@ public class SurfaceFurniture extends CustomTilemap {
 
 	private static final int ATLAS_COLUMNS = 8;
 	private Type type = Type.BED;
+	private boolean abandoned;
 
 	{
 		texture = Assets.Environment.SURFACE_FURNITURE;
@@ -46,7 +47,12 @@ public class SurfaceFurniture extends CustomTilemap {
 	}
 
 	public SurfaceFurniture(Type type, int x, int y) {
+		this(type, x, y, false);
+	}
+
+	public SurfaceFurniture(Type type, int x, int y, boolean abandoned) {
 		this.type = type;
+		this.abandoned = abandoned;
 		pos(x, y);
 		tileH = type == Type.BED ? 2 : 1;
 	}
@@ -74,20 +80,23 @@ public class SurfaceFurniture extends CustomTilemap {
 
 	@Override
 	public String desc(int tileX, int tileY) {
-		return Messages.get(this, type.name() + "_desc");
+		return Messages.get(this, (abandoned ? "abandoned_" : "") + type.name() + "_desc");
 	}
 
 	private static final String TYPE = "type";
+	private static final String ABANDONED = "abandoned";
 
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		type = bundle.getEnum(TYPE, Type.class);
+		abandoned = bundle.getBoolean(ABANDONED);
 	}
 
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
 		bundle.put(TYPE, type);
+		bundle.put(ABANDONED, abandoned);
 	}
 }
