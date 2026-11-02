@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceCobweb;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceForest;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceHandcart;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture.Type;
@@ -45,8 +46,6 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Music;
 
 public class SurfaceLevel extends Level {
-
-	private static final int SIZE = 100;
 
 	@Override
 	public String tilesTex() {
@@ -65,8 +64,9 @@ public class SurfaceLevel extends Level {
 
 	@Override
 	protected boolean build() {
-		setSize(SIZE, SIZE);
-		Painter.fill(this, 1, 1, SIZE - 2, SIZE - 2, Terrain.EMPTY);
+		setSize(SurfaceForest.WIDTH, SurfaceForest.HEIGHT);
+		Painter.fill(this, 1, 1, width() - 2, height() - 2, Terrain.EMPTY);
+		SurfaceForest.plant(this);
 
 		int centerX = width() / 2;
 		int centerY = height() / 2;
@@ -223,6 +223,9 @@ public class SurfaceLevel extends Level {
 					&& y >= tile.tileY && y < tile.tileY + tile.tileH) {
 				if (tile instanceof SurfaceHandcart) return false;
 				if (tile instanceof SurfaceExterior) return ((SurfaceExterior) tile).blocksSight();
+				if (tile instanceof SurfaceForest && ((SurfaceForest) tile).containsCell(x, y)) {
+					return ((SurfaceForest) tile).blocksSight(x, y);
+				}
 			}
 		}
 		return true;

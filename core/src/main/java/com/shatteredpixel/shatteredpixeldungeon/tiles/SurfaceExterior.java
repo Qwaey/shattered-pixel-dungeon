@@ -29,7 +29,7 @@ import com.watabou.utils.Bundle;
 
 public class SurfaceExterior extends CustomTilemap {
 
-	// Sprites share a baseline on the bottom row of the 256x48 atlas.
+	// Sprites share a baseline on the bottom row of the 576x48 atlas.
 	public enum Type {
 		OAK(0, 2, 3), BIRCH(2, 2, 3), PINE(4, 2, 3), APPLE_TREE(6, 2, 3),
 		WELL(8, 2, 2), HANDCART(10, 2, 1), HAYSTACK(12, 2, 2), CHOPPING_BLOCK(14, 1, 1);
@@ -44,7 +44,7 @@ public class SurfaceExterior extends CustomTilemap {
 		}
 	}
 
-	private static final int ATLAS_WIDTH = 256;
+	static final int ATLAS_WIDTH = 576;
 	private static final int ATLAS_ROWS = 3;
 	private Type type = Type.OAK;
 	private boolean canopy;
