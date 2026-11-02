@@ -182,8 +182,9 @@ public class SurfaceLevel extends Level {
 		customTiles.add(cart);
 		placeExterior(x - 12, y - 5, SurfaceExterior.Type.CHOPPING_BLOCK);
 		placeExterior(x - 8, y, SurfaceExterior.Type.CHOPPING_BLOCK);
+		// Both haystacks stay inside the harvested field east of the houses.
 		placeExterior(x + 13, y + 3, SurfaceExterior.Type.HAYSTACK);
-		placeExterior(x - 7, y + 2, SurfaceExterior.Type.HAYSTACK);
+		placeExterior(x + 18, y + 5, SurfaceExterior.Type.HAYSTACK);
 		placeExterior(x + 7, y + 7, SurfaceExterior.Type.HANDCART);
 	}
 

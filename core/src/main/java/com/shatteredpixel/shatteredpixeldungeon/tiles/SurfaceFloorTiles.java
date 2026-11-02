@@ -21,10 +21,31 @@ package com.shatteredpixel.shatteredpixeldungeon.tiles;
 // Visuals only: none of these decorations change a cell's terrain or flags.
 public class SurfaceFloorTiles {
 
-	// Slots 13-15 are unused in the original sheet, and belong only to tiles_surface.
+	// Slots 13-15 and 21 are unused in the original sheet, and belong only to tiles_surface.
 	private static final int LEAVES = 13;
 	private static final int FLOWERS = 14;
 	private static final int STRAW = 15;
+	private static final int FIELD = 21;
+	// A new row appended to tiles_surface; each tile blends four grass/field corners.
+	private static final int FIELD_EDGE = 256;
+	private static final int FIELD_X = 11;
+	private static final int FIELD_Y = -1;
+
+	// Authored corner samples, not occupied cells: '#' = field, '.' = meadow.
+	// The neighbouring four samples select a rounded edge, corner, or plain field tile.
+	private static final String[] FIELD_SHAPE = {
+			".............",
+			"....####.....",
+			"..########...",
+			".###########.",
+			".###########.",
+			"..##########.",
+			".###########.",
+			"..#########..",
+			"...#######...",
+			".....###.....",
+			"............."
+	};
 
 	// An authored, sparse meadow mosaic, repeated outside the village.
 	// '.' = grass, 'd' = dirt, 'p' = pebbles, 'f' = flowers.
@@ -56,13 +77,6 @@ public class SurfaceFloorTiles {
 			" ll   ",
 			"l   l ",
 			"  l  l"
-	};
-
-	private static final String[] LOOSE_STRAW = {
-			" s  s ",
-			"s ss  ",
-			" s  s ",
-			"  s  s"
 	};
 
 	// Positions are relative to the surface's centre, like the houses and trees.
@@ -103,9 +117,7 @@ public class SurfaceFloorTiles {
 			new Patch(-4, 13, LEAF_LITTER),
 			new Patch(-11, 9, LEAF_LITTER),
 			new Patch(-18, -1, LEAF_LITTER),
-			// Loose straw stays close to the two haystacks and the southern cart.
-			new Patch(11, 2, LOOSE_STRAW),
-			new Patch(-9, 1, LOOSE_STRAW),
+			// Loose straw beside the southern cart; the haystacks now stand on field ground.
 			new Patch(6, 7, " s  ", "s s ", " s  "),
 			// A few flowers at the quieter outer edges of the settlement.
 			new Patch(-14, 7, " f   ", "   f ", "f    "),
@@ -120,6 +132,8 @@ public class SurfaceFloorTiles {
 		char detail = row.charAt(x % row.length());
 		int villageX = x - width / 2;
 		int villageY = y - height / 2;
+		int field = fieldVisual(villageX, villageY);
+		if (field != -1) return field;
 		for (Patch patch : PATCHES) {
 			int py = villageY - patch.y;
 			if (py < 0 || py >= patch.rows.length) continue;
@@ -137,6 +151,20 @@ public class SurfaceFloorTiles {
 			case 's': return STRAW;
 			default:  return DungeonTileSheet.FLOOR;
 		}
+	}
+
+	private static int fieldVisual(int x, int y) {
+		x -= FIELD_X;
+		y -= FIELD_Y;
+		if (x < 0 || y < 0 || y >= FIELD_SHAPE.length - 1
+				|| x >= FIELD_SHAPE[0].length() - 1) return -1;
+		// Clockwise bits: north-west, north-east, south-east, south-west.
+		int corners = (FIELD_SHAPE[y].charAt(x) == '#' ? 1 : 0)
+				| (FIELD_SHAPE[y].charAt(x + 1) == '#' ? 2 : 0)
+				| (FIELD_SHAPE[y + 1].charAt(x + 1) == '#' ? 4 : 0)
+				| (FIELD_SHAPE[y + 1].charAt(x) == '#' ? 8 : 0);
+		if (corners == 0) return -1;
+		return corners == 15 ? FIELD : FIELD_EDGE + corners;
 	}
 
 	private static class Patch {
