@@ -24,8 +24,11 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.BerryPie;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Bucket;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.FlourSack;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.PieBerries;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -39,8 +42,9 @@ import com.watabou.utils.Callback;
 
 public class Grandmother extends NPC {
 
-	private boolean given;
-	private boolean completed;
+	private enum Stage { NEW, WATER, FLOUR, BERRIES, COMPLETED }
+
+	private Stage stage = Stage.NEW;
 
 	{
 		spriteClass = GrandmotherSprite.class;
@@ -49,7 +53,16 @@ public class Grandmother extends NPC {
 
 	@Override
 	public Notes.Landmark landmark() {
-		return given && !completed ? Notes.Landmark.GRANDMOTHER : null;
+		switch (stage) {
+			case WATER:   return Notes.Landmark.GRANDMOTHER;
+			case FLOUR:   return Notes.Landmark.GRANDMOTHER_FLOUR;
+			case BERRIES: return Notes.Landmark.GRANDMOTHER_BERRIES;
+			default:      return null;
+		}
+	}
+
+	public boolean needsFlour() {
+		return stage == Stage.FLOUR;
 	}
 
 	@Override
@@ -66,9 +79,9 @@ public class Grandmother extends NPC {
 	}
 
 	private void showQuest() {
-		if (completed) {
+		if (stage == Stage.COMPLETED) {
 			GameScene.show(new WndQuest(this, Messages.get(this, "after")));
-		} else if (!given) {
+		} else if (stage == Stage.NEW) {
 			GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
 					Messages.get(this, "request"),
 					Messages.get(this, "accept"), Messages.get(this, "decline")) {
@@ -78,42 +91,58 @@ public class Grandmother extends NPC {
 				}
 			});
 		} else {
-			final Bucket bucket = Dungeon.hero.belongings.getItem(Bucket.class);
-			if (bucket != null && bucket.isFilled()) {
+			final Stage expectedStage = stage;
+			final String topic = stage.name().toLowerCase(java.util.Locale.ROOT);
+			final Item ingredient;
+			if (stage == Stage.WATER) {
+				Bucket bucket = Dungeon.hero.belongings.getItem(Bucket.class);
+				ingredient = bucket != null && bucket.isFilled() ? bucket : null;
+			} else if (stage == Stage.FLOUR) {
+				ingredient = Dungeon.hero.belongings.getItem(FlourSack.class);
+			} else {
+				ingredient = Dungeon.hero.belongings.getItem(PieBerries.class);
+			}
+			if (ingredient != null) {
 				GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
-						Messages.get(this, "return"),
-						Messages.get(this, "give"), Messages.get(this, "later")) {
+						Messages.get(this, topic + "_return"),
+						Messages.get(this, topic + "_give"), Messages.get(this, "later")) {
 					@Override
 					protected void onSelect(int index) {
-						if (index == 0) completeQuest(bucket);
+						if (index == 0) receiveIngredient(ingredient, expectedStage);
 					}
 				});
 			} else {
-				GameScene.show(new WndQuest(this, Messages.get(this, "reminder")));
+				GameScene.show(new WndQuest(this, Messages.get(this, topic + "_reminder")));
 			}
 		}
 	}
 
 	private void acceptQuest() {
-		if (given || completed) return;
+		if (stage != Stage.NEW) return;
 		Bucket bucket = new Bucket();
 		if (!bucket.collect()) {
 			GameScene.show(new WndQuest(this, Messages.get(this, "no_space")));
 			return;
 		}
-		given = true;
-		Notes.add(Notes.Landmark.GRANDMOTHER);
+		stage = Stage.WATER;
+		Notes.add(landmark());
 		GLog.i(Messages.capitalize(Messages.get(Dungeon.hero, "you_now_have", bucket.name())));
 		GameScene.show(new WndQuest(this, Messages.get(this, "accepted")));
 	}
 
-	private void completeQuest(Bucket bucket) {
-		if (!given || completed || !bucket.isFilled()
-				|| !Dungeon.hero.belongings.contains(bucket)) return;
-		bucket.detachAll(Dungeon.hero.belongings.backpack);
-		completed = true;
-		Notes.remove(Notes.Landmark.GRANDMOTHER);
-		Food reward = new Food();
+	private void receiveIngredient(Item ingredient, Stage expectedStage) {
+		if (stage != expectedStage || !Dungeon.hero.belongings.contains(ingredient)) return;
+		ingredient.detachAll(Dungeon.hero.belongings.backpack);
+		Notes.remove(landmark());
+		if (stage == Stage.WATER || stage == Stage.FLOUR) {
+			String reply = stage == Stage.WATER ? "water_received" : "flour_received";
+			stage = stage == Stage.WATER ? Stage.FLOUR : Stage.BERRIES;
+			Notes.add(landmark());
+			GameScene.show(new WndQuest(this, Messages.get(this, reply)));
+			return;
+		}
+		stage = Stage.COMPLETED;
+		BerryPie reward = new BerryPie();
 		if (reward.doPickUp(Dungeon.hero)) {
 			GLog.i(Messages.capitalize(Messages.get(Dungeon.hero, "you_now_have", reward.name())));
 		} else {
@@ -142,20 +171,17 @@ public class Grandmother extends NPC {
 		return true;
 	}
 
-	private static final String GIVEN = "given";
-	private static final String COMPLETED = "completed";
+	private static final String STAGE = "stage";
 
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
-		bundle.put(GIVEN, given);
-		bundle.put(COMPLETED, completed);
+		bundle.put(STAGE, stage);
 	}
 
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
-		given = bundle.getBoolean(GIVEN);
-		completed = bundle.getBoolean(COMPLETED);
+		stage = bundle.getEnum(STAGE, Stage.class);
 	}
 }

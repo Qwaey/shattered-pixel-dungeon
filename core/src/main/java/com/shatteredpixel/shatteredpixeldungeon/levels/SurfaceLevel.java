@@ -31,10 +31,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Miron;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Villager;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.CartPlank;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.FlourSack;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.PieBerries;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.HayQuest;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceBerryBush;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceCobweb;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceForest;
@@ -106,6 +109,7 @@ public class SurfaceLevel extends Level {
 				LUMBERJACK_HOUSE_X + 7, LUMBERJACK_HOUSE_Y + 3);
 		paintHouse(NORTH_EAST_HOUSE_X, NORTH_EAST_HOUSE_Y, 8, 6,
 				NORTH_EAST_HOUSE_X + 3, NORTH_EAST_HOUSE_Y + 5);
+		Painter.set(this, NORTH_EAST_HOUSE_X + 3, NORTH_EAST_HOUSE_Y + 5, Terrain.LOCKED_DOOR);
 		paintHouse(SOUTH_HOUSE_X, SOUTH_HOUSE_Y, 8, 6,
 				SOUTH_HOUSE_X, SOUTH_HOUSE_Y + 3);
 		furnishLumberjackHouse(LUMBERJACK_HOUSE_X, LUMBERJACK_HOUSE_Y);
@@ -203,6 +207,11 @@ public class SurfaceLevel extends Level {
 		SurfaceHandcart cart = new SurfaceHandcart(CART_X, CART_Y);
 		Painter.fill(this, cart.tileX, cart.tileY, cart.tileW, cart.tileH, Terrain.SURFACE_DECO);
 		customTiles.add(cart);
+		// The berry bush grows inside the nook, beyond the cart's blocked entrance.
+		SurfaceBerryBush bush = new SurfaceBerryBush(47, 12, false);
+		Painter.fill(this, bush.tileX, bush.tileY, bush.tileW, bush.tileH, Terrain.SURFACE_DECO);
+		customTiles.add(bush);
+		customWalls.add(new SurfaceBerryBush(47, 12, true));
 		placeExterior(15, 19, SurfaceExterior.Type.CHOPPING_BLOCK);
 		placeExterior(20, 14, SurfaceExterior.Type.CHOPPING_BLOCK);
 		// The field lies south-west of the square, below the lumberjack's home.
@@ -245,7 +254,7 @@ public class SurfaceLevel extends Level {
 		for (CustomTilemap tile : customTiles) {
 			if (x >= tile.tileX && x < tile.tileX + tile.tileW
 					&& y >= tile.tileY && y < tile.tileY + tile.tileH) {
-				if (tile instanceof SurfaceHandcart) return false;
+				if (tile instanceof SurfaceHandcart || tile instanceof SurfaceBerryBush) return false;
 				if (tile instanceof SurfaceExterior) return ((SurfaceExterior) tile).blocksSight();
 				if (tile instanceof SurfaceForest && ((SurfaceForest) tile).containsCell(x, y)) {
 					return ((SurfaceForest) tile).blocksSight(x, y);
@@ -274,6 +283,52 @@ public class SurfaceLevel extends Level {
 			if (tile instanceof SurfaceHandcart) return (SurfaceHandcart) tile;
 		}
 		return null;
+	}
+
+	public Grandmother grandmother() {
+		for (Mob mob : mobs) {
+			if (mob instanceof Grandmother) return (Grandmother) mob;
+		}
+		return null;
+	}
+
+	private SurfaceBerryBush berryBush() {
+		for (CustomTilemap tile : customTiles) {
+			if (tile instanceof SurfaceBerryBush) return (SurfaceBerryBush) tile;
+		}
+		return null;
+	}
+
+	public boolean isBerryBushCell(int cell) {
+		SurfaceBerryBush bush = berryBush();
+		return cell >= 0 && cell < length() && bush != null
+				&& cell / width() == bush.tileY
+				&& cell % width() >= bush.tileX && cell % width() < bush.tileX + bush.tileW;
+	}
+
+	public void harvestBerries(Hero hero, int cell) {
+		if (Dungeon.level != this || !isBerryBushCell(cell) || !adjacent(hero.pos, cell)) return;
+		SurfaceBerryBush bush = berryBush();
+		if (bush.isHarvested()) {
+			GLog.i(Messages.get(SurfaceBerryBush.class, "empty"));
+			return;
+		}
+		PieBerries berries = new PieBerries();
+		if (berries.collect()) {
+			GLog.i(Messages.capitalize(Messages.get(hero, "you_now_have", berries.name())));
+		} else {
+			drop(berries, hero.pos).sprite.drop();
+			GLog.i(Messages.get(SurfaceBerryBush.class, "no_space"));
+		}
+		bush.harvest();
+		for (CustomTilemap tile : customWalls) {
+			if (tile instanceof SurfaceBerryBush) ((SurfaceBerryBush) tile).harvest();
+		}
+		GameScene.updateMap();
+		GLog.p(Messages.get(SurfaceBerryBush.class, "gathered"));
+		hero.busy();
+		hero.sprite.operate(cell);
+		hero.spend(1f);
 	}
 
 	public boolean isHandcartCell(int cell) {
@@ -390,9 +445,11 @@ public class SurfaceLevel extends Level {
 
 	@Override
 	protected void createItems() {
-		// An ordinary unlocked chest against the eastern wall of the right-hand house.
+		// Separate unlocked chests inside Miron's locked home.
 		drop(new CartPlank(), (NORTH_EAST_HOUSE_Y + 3) * width()
 				+ NORTH_EAST_HOUSE_X + 6).type = Heap.Type.CHEST;
+		drop(new FlourSack(), (NORTH_EAST_HOUSE_Y + 2) * width()
+				+ NORTH_EAST_HOUSE_X + 2).type = Heap.Type.CHEST;
 	}
 
 	@Override

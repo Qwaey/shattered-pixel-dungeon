@@ -142,6 +142,8 @@ public class Notes {
 		TROLL,
 		IMP,
 		GRANDMOTHER,
+		GRANDMOTHER_FLOUR,
+		GRANDMOTHER_BERRIES,
 		HANDCART,
 		HAY_FIELD,
 		HAY_REWARD,
@@ -210,6 +212,8 @@ public class Notes {
 				case WANDMAKER:
 					return new Image(new WandmakerSprite());
 				case GRANDMOTHER:
+				case GRANDMOTHER_FLOUR:
+				case GRANDMOTHER_BERRIES:
 					return new Image(new GrandmotherSprite());
 				case HANDCART:
 					return new Image(new LumberjackSprite());
@@ -275,7 +279,10 @@ public class Notes {
 				case WANDMAKER:     return Messages.get(Wandmaker.class, "desc");
 				case TROLL:         return Messages.get(Blacksmith.class, "desc");
 				case IMP:           return Messages.get(Imp.class, "desc");
-				case GRANDMOTHER:   return Messages.get(Landmark.class, "grandmother_desc");
+				case GRANDMOTHER:
+				case GRANDMOTHER_FLOUR:
+				case GRANDMOTHER_BERRIES:
+					return Messages.get(Landmark.class, landmark.name() + "_desc");
 				case HANDCART:      return Messages.get(Landmark.class, "handcart_desc");
 				case HAY_FIELD:
 				case HAY_REWARD:

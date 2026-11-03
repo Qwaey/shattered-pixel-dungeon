@@ -8,18 +8,25 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.HayQuest;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MironSprite;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Callback;
+import com.watabou.utils.Bundle;
+
+import java.util.ArrayList;
 
 public class Miron extends NPC {
+
+	private boolean flourKeyGiven;
 
 	{
 		spriteClass = MironSprite.class;
@@ -56,10 +63,17 @@ public class Miron extends NPC {
 	}
 
 	private void showTopics() {
+		Grandmother grandmother = Dungeon.level instanceof SurfaceLevel
+				? ((SurfaceLevel) Dungeon.level).grandmother() : null;
+		final boolean flourTopic = grandmother != null && grandmother.needsFlour();
+		ArrayList<String> topics = new ArrayList<>();
+		topics.add(Messages.get(this, "ask_story"));
+		topics.add(Messages.get(this, "ask_work"));
+		topics.add(Messages.get(this, "ask_hay"));
+		if (flourTopic) topics.add(Messages.get(this, "ask_flour"));
+		topics.add(Messages.get(this, "goodbye"));
 		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
-				Messages.get(this, "greeting"), Messages.get(this, "ask_story"),
-				Messages.get(this, "ask_work"), Messages.get(this, "ask_hay"),
-				Messages.get(this, "goodbye")) {
+				Messages.get(this, "greeting"), topics.toArray(new String[0])) {
 			@Override
 			protected void onSelect(int index) {
 				if (index == 0 || index == 1) {
@@ -67,9 +81,26 @@ public class Miron extends NPC {
 				} else if (index == 2 && Dungeon.level instanceof SurfaceLevel) {
 					HayQuest quest = ((SurfaceLevel) Dungeon.level).hayQuest();
 					if (quest != null) quest.talk(Miron.this);
+				} else if (index == 3 && flourTopic) {
+					talkFlour();
 				}
 			}
 		});
+	}
+
+	private void talkFlour() {
+		if (!(Dungeon.level instanceof SurfaceLevel)) return;
+		Grandmother grandmother = ((SurfaceLevel) Dungeon.level).grandmother();
+		if (grandmother == null || !grandmother.needsFlour()) return;
+		if (!flourKeyGiven) {
+			flourKeyGiven = true;
+			IronKey key = new IronKey(0);
+			key.doPickUp(Dungeon.hero);
+			GLog.i(Messages.capitalize(Messages.get(Dungeon.hero, "you_now_have", key.name())));
+			say("flour_key");
+		} else {
+			say("flour_reminder");
+		}
 	}
 
 	private void showReply(String topic) {
@@ -99,5 +130,17 @@ public class Miron extends NPC {
 	@Override
 	public boolean reset() {
 		return true;
+	}
+
+	@Override
+	public void storeInBundle(Bundle bundle) {
+		super.storeInBundle(bundle);
+		bundle.put("flour_key_given", flourKeyGiven);
+	}
+
+	@Override
+	public void restoreFromBundle(Bundle bundle) {
+		super.restoreFromBundle(bundle);
+		flourKeyGiven = bundle.getBoolean("flour_key_given");
 	}
 }

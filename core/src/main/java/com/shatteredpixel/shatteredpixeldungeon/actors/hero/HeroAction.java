@@ -99,6 +99,12 @@ public class HeroAction {
 			this.dst = cell;
 		}
 	}
+
+	public static class GatherBerries extends HeroAction {
+		public GatherBerries(int bush) {
+			this.dst = bush;
+		}
+	}
 	
 	public static class Attack extends HeroAction {
 		public Char target;

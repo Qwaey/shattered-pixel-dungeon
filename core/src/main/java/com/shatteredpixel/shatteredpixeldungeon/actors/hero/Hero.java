@@ -930,6 +930,9 @@ public class Hero extends Char {
 			} else if (curAction instanceof HeroAction.Handcart) {
 				actResult = actHandcart((HeroAction.Handcart) curAction);
 
+			} else if (curAction instanceof HeroAction.GatherBerries) {
+				actResult = actGatherBerries((HeroAction.GatherBerries) curAction);
+
 			} else if (curAction instanceof HeroAction.HayQuest) {
 				actResult = actHayQuest((HeroAction.HayQuest) curAction);
 				
@@ -1130,6 +1133,31 @@ public class Hero extends Char {
 				public void call() {
 					if (Dungeon.level instanceof SurfaceLevel) {
 						((SurfaceLevel) Dungeon.level).interactHandcart(Hero.this, action.dst);
+					}
+				}
+			});
+			return false;
+		} else if (getCloser(action.dst)) {
+			return true;
+		} else {
+			ready();
+			return false;
+		}
+	}
+
+	private boolean actGatherBerries(final HeroAction.GatherBerries action) {
+		if (!(Dungeon.level instanceof SurfaceLevel)
+				|| !((SurfaceLevel) Dungeon.level).isBerryBushCell(action.dst)) {
+			ready();
+			return false;
+		}
+		if (Dungeon.level.adjacent(pos, action.dst)) {
+			ready();
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					if (Dungeon.level instanceof SurfaceLevel) {
+						((SurfaceLevel) Dungeon.level).harvestBerries(Hero.this, action.dst);
 					}
 				}
 			});
@@ -2039,6 +2067,12 @@ public class Hero extends Char {
 				&& (Dungeon.level.visited[cell] || Dungeon.level.mapped[cell])) {
 
 			curAction = new HeroAction.Handcart(cell);
+
+		} else if (Dungeon.level instanceof SurfaceLevel
+				&& ((SurfaceLevel) Dungeon.level).isBerryBushCell(cell)
+				&& (Dungeon.level.visited[cell] || Dungeon.level.mapped[cell])) {
+
+			curAction = new HeroAction.GatherBerries(cell);
 
 		} else if (Dungeon.level instanceof SurfaceLevel
 				&& ((SurfaceLevel) Dungeon.level).hayQuest() != null
