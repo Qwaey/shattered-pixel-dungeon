@@ -50,6 +50,14 @@ import com.watabou.utils.Bundle;
 
 public class SurfaceLevel extends Level {
 
+	private static final int BARN_X = 8, BARN_Y = 7;
+	private static final int LUMBERJACK_HOUSE_X = 17, LUMBERJACK_HOUSE_Y = 16;
+	private static final int NORTH_EAST_HOUSE_X = 29, NORTH_EAST_HOUSE_Y = 9;
+	private static final int SOUTH_HOUSE_X = 31, SOUTH_HOUSE_Y = 21;
+	private static final int WELL_X = 27, WELL_Y = 19;
+	private static final int CART_X = 46, CART_Y = 20;
+	private static final int PARKED_CART_X = 42, PARKED_CART_Y = 23;
+
 	private HayQuest hayQuest;
 
 	public HayQuest hayQuest() {
@@ -89,27 +97,25 @@ public class SurfaceLevel extends Level {
 		Painter.fill(this, 1, 1, width() - 2, height() - 2, Terrain.EMPTY);
 		SurfaceForest.plant(this);
 
-		int centerX = width() / 2;
-		int centerY = height() / 2;
+		// The detached north-western barn opens onto the path into the village.
+		paintHouse(BARN_X, BARN_Y, 8, 7, BARN_X + 4, BARN_Y + 6);
+		furnishBarn(BARN_X, BARN_Y);
 
-		// The dungeon opens into an abandoned barn west of the village.
-		int barnX = centerX - 26;
-		int barnY = centerY - 6;
-		paintHouse(barnX, barnY, 10, 9, barnX + 9, barnY + 4);
-		furnishBarn(barnX, barnY);
-
-		paintHouse(centerX - 10, centerY - 8, 8, 7, centerX - 3, centerY - 4);
-		// A two-cell lane between the northern houses leads to the well.
-		paintHouse(centerX, centerY - 8, 8, 7, centerX, centerY - 4);
-		paintHouse(centerX - 4, centerY + 4, 9, 7, centerX, centerY + 4);
-		furnishLumberjackHouse(centerX - 10, centerY - 8);
-		furnishNorthEastHouse(centerX, centerY - 8);
-		furnishSouthHouse(centerX - 4, centerY + 4);
-		plantTrees(centerX, centerY);
-		decorateYards(centerX, centerY);
+		// Three rectangular homes face the open square around the well.
+		paintHouse(LUMBERJACK_HOUSE_X, LUMBERJACK_HOUSE_Y, 8, 6,
+				LUMBERJACK_HOUSE_X + 7, LUMBERJACK_HOUSE_Y + 3);
+		paintHouse(NORTH_EAST_HOUSE_X, NORTH_EAST_HOUSE_Y, 8, 6,
+				NORTH_EAST_HOUSE_X + 3, NORTH_EAST_HOUSE_Y + 5);
+		paintHouse(SOUTH_HOUSE_X, SOUTH_HOUSE_Y, 8, 6,
+				SOUTH_HOUSE_X, SOUTH_HOUSE_Y + 3);
+		furnishLumberjackHouse(LUMBERJACK_HOUSE_X, LUMBERJACK_HOUSE_Y);
+		furnishNorthEastHouse(NORTH_EAST_HOUSE_X, NORTH_EAST_HOUSE_Y);
+		furnishSouthHouse(SOUTH_HOUSE_X, SOUTH_HOUSE_Y);
+		plantTrees();
+		decorateYards();
 		hayQuest = new HayQuest();
 
-		int stairs = (barnY + 4) * width() + barnX + 3;
+		int stairs = (BARN_Y + 3) * width() + BARN_X + 3;
 		map[stairs] = Terrain.EXIT;
 		transitions.add(new LevelTransition(this, stairs,
 				LevelTransition.Type.REGULAR_EXIT, 1, 0, LevelTransition.Type.SURFACE));
@@ -126,48 +132,48 @@ public class SurfaceLevel extends Level {
 		// Original storage barrels with wooden flooring and their standard overhangs.
 		Painter.set(this, x + 1, y + 2, Terrain.REGION_DECO_ALT);
 		Painter.set(this, x + 2, y + 2, Terrain.REGION_DECO_ALT);
-		Painter.set(this, x + 7, y + 2, Terrain.REGION_DECO_ALT);
-		Painter.set(this, x + 8, y + 2, Terrain.REGION_DECO_ALT);
+		Painter.set(this, x + 1, y + 3, Terrain.REGION_DECO_ALT);
+		Painter.set(this, x + 2, y + 3, Terrain.REGION_DECO_ALT);
 		placeFurniture(x + 4, y + 1, Type.CUPBOARD, true);
-		placeFurniture(x + 5, y + 1, Type.FIREWOOD, true);
-		placeFurniture(x + 1, y + 6, Type.FIREWOOD, true);
-		placeFurniture(x + 6, y + 6, Type.TABLE, true);
-		placeFurniture(x + 5, y + 6, Type.STOOL, true);
+		placeFurniture(x + 6, y + 2, Type.FIREWOOD, true);
+		placeFurniture(x + 6, y + 3, Type.FIREWOOD, true);
+		placeFurniture(x + 4, y + 4, Type.TABLE, true);
+		placeFurniture(x + 5, y + 4, Type.STOOL, true);
 		// Decorative overlays preserve the wooden floor and never entangle the hero.
 		customTiles.add(new SurfaceCobweb(x + 1, y + 1, SurfaceCobweb.Corner.NORTH_WEST));
-		customTiles.add(new SurfaceCobweb(x + 8, y + 1, SurfaceCobweb.Corner.NORTH_EAST));
-		customTiles.add(new SurfaceCobweb(x + 1, y + 7, SurfaceCobweb.Corner.SOUTH_WEST));
-		customTiles.add(new SurfaceCobweb(x + 8, y + 7, SurfaceCobweb.Corner.SOUTH_EAST));
+		customTiles.add(new SurfaceCobweb(x + 6, y + 1, SurfaceCobweb.Corner.NORTH_EAST));
+		customTiles.add(new SurfaceCobweb(x + 1, y + 5, SurfaceCobweb.Corner.SOUTH_WEST));
+		customTiles.add(new SurfaceCobweb(x + 6, y + 5, SurfaceCobweb.Corner.SOUTH_EAST));
 	}
 
 	private void furnishLumberjackHouse(int x, int y) {
-		placeFurniture(x + 1, y + 1, Type.BED);
+		placeFurniture(x + 5, y + 1, Type.BED);
 		placeFurniture(x + 3, y + 1, Type.CUPBOARD);
-		placeFurniture(x + 6, y + 1, Type.STOVE);
-		placeFurniture(x + 6, y + 2, Type.FIREWOOD);
-		placeFurniture(x + 2, y + 4, Type.TABLE);
-		placeFurniture(x + 3, y + 4, Type.STOOL);
-		placeFurniture(x + 5, y + 1, Type.WASHBASIN);
+		placeFurniture(x + 1, y + 1, Type.STOVE);
+		placeFurniture(x + 1, y + 2, Type.FIREWOOD);
+		placeFurniture(x + 3, y + 3, Type.TABLE);
+		placeFurniture(x + 2, y + 3, Type.STOOL);
+		placeFurniture(x + 4, y + 1, Type.WASHBASIN);
 	}
 
 	private void furnishNorthEastHouse(int x, int y) {
-		placeFurniture(x + 6, y + 1, Type.BED);
-		placeFurniture(x + 4, y + 1, Type.CUPBOARD);
+		placeFurniture(x + 5, y + 1, Type.BED);
+		placeFurniture(x + 3, y + 1, Type.CUPBOARD);
 		placeFurniture(x + 1, y + 1, Type.STOVE);
 		placeFurniture(x + 2, y + 1, Type.WASHBASIN);
 		placeFurniture(x + 1, y + 2, Type.FIREWOOD);
-		placeFurniture(x + 4, y + 4, Type.TABLE);
-		placeFurniture(x + 5, y + 4, Type.STOOL);
+		placeFurniture(x + 3, y + 3, Type.TABLE);
+		placeFurniture(x + 4, y + 3, Type.STOOL);
 	}
 
 	private void furnishSouthHouse(int x, int y) {
-		placeFurniture(x + 1, y + 3, Type.BED);
-		placeFurniture(x + 1, y + 1, Type.CUPBOARD);
-		placeFurniture(x + 7, y + 1, Type.STOVE);
-		placeFurniture(x + 7, y + 2, Type.FIREWOOD);
-		placeFurniture(x + 7, y + 4, Type.WASHBASIN);
+		placeFurniture(x + 1, y + 1, Type.BED);
+		placeFurniture(x + 3, y + 1, Type.CUPBOARD);
+		placeFurniture(x + 6, y + 2, Type.STOVE);
+		placeFurniture(x + 6, y + 3, Type.FIREWOOD);
+		placeFurniture(x + 5, y + 1, Type.WASHBASIN);
 		placeFurniture(x + 3, y + 3, Type.TABLE);
-		placeFurniture(x + 2, y + 3, Type.STOOL);
+		placeFurniture(x + 4, y + 3, Type.STOOL);
 	}
 
 	private void placeFurniture(int x, int y, Type type) {
@@ -180,29 +186,29 @@ public class SurfaceLevel extends Level {
 		customTiles.add(furniture);
 	}
 
-	private void plantTrees(int x, int y) {
-		placeExterior(x - 15, y - 6, SurfaceExterior.Type.OAK);
-		placeExterior(x - 7, y - 12, SurfaceExterior.Type.PINE);
-		placeExterior(x + 6, y - 12, SurfaceExterior.Type.OAK);
-		placeExterior(x + 15, y - 2, SurfaceExterior.Type.PINE);
-		placeExterior(x + 10, y + 9, SurfaceExterior.Type.OAK);
-		placeExterior(x + 5, y + 15, SurfaceExterior.Type.PINE);
-		placeExterior(x - 11, y + 3, SurfaceExterior.Type.PINE);
-		placeExterior(x - 16, y + 1, SurfaceExterior.Type.OAK);
+	private void plantTrees() {
+		placeExterior(6, 15, SurfaceExterior.Type.OAK);
+		placeExterior(23, 8, SurfaceExterior.Type.PINE);
+		placeExterior(28, 6, SurfaceExterior.Type.OAK);
+		placeExterior(39, 23, SurfaceExterior.Type.PINE);
+		placeExterior(38, 29, SurfaceExterior.Type.OAK);
+		placeExterior(30, 32, SurfaceExterior.Type.PINE);
+		placeExterior(14, 21, SurfaceExterior.Type.PINE);
+		placeExterior(12, 20, SurfaceExterior.Type.OAK);
 	}
 
-	private void decorateYards(int x, int y) {
-		placeExterior(x, y - 10, SurfaceExterior.Type.WELL);
-		SurfaceHandcart cart = new SurfaceHandcart(x - 2, y - 6);
+	private void decorateYards() {
+		placeExterior(WELL_X, WELL_Y, SurfaceExterior.Type.WELL);
+		// The forest leaves just this two-cell entrance into the secluded nook.
+		SurfaceHandcart cart = new SurfaceHandcart(CART_X, CART_Y);
 		Painter.fill(this, cart.tileX, cart.tileY, cart.tileW, cart.tileH, Terrain.SURFACE_DECO);
 		customTiles.add(cart);
-		placeExterior(x - 12, y - 5, SurfaceExterior.Type.CHOPPING_BLOCK);
-		placeExterior(x - 8, y, SurfaceExterior.Type.CHOPPING_BLOCK);
-		// All three haystacks stay inside the harvested field east of the houses.
-		placeExterior(x + 13, y + 3, SurfaceExterior.Type.HAYSTACK);
-		placeExterior(x + 18, y + 5, SurfaceExterior.Type.HAYSTACK);
+		placeExterior(15, 19, SurfaceExterior.Type.CHOPPING_BLOCK);
+		placeExterior(20, 14, SurfaceExterior.Type.CHOPPING_BLOCK);
+		// The field lies south-west of the square, below the lumberjack's home.
+		placeExterior(HayQuest.FIRST_STACK_X, HayQuest.FIRST_STACK_Y, SurfaceExterior.Type.HAYSTACK);
+		placeExterior(HayQuest.SECOND_STACK_X, HayQuest.SECOND_STACK_Y, SurfaceExterior.Type.HAYSTACK);
 		placeExterior(HayQuest.THIRD_STACK_X, HayQuest.THIRD_STACK_Y, SurfaceExterior.Type.HAYSTACK);
-		placeExterior(x + 7, y + 7, SurfaceExterior.Type.HANDCART);
 	}
 
 	private void placeExterior(int x, int y, SurfaceExterior.Type type) {
@@ -316,8 +322,8 @@ public class SurfaceLevel extends Level {
 			cart.support();
 			GLog.p(Messages.get(SurfaceHandcart.class, "supported"));
 		} else {
-			int targetX = width() / 2 - 4;
-			int targetY = height() / 2 - 10;
+			int targetX = PARKED_CART_X;
+			int targetY = PARKED_CART_Y;
 			// Never move the cart onto a character or an item left on its parking spot.
 			for (int x = targetX; x < targetX + cart.tileW; x++) {
 				int target = targetY * width() + x;
@@ -353,20 +359,21 @@ public class SurfaceLevel extends Level {
 		}
 
 		if (!hasVillager) {
-			// Inside the north-western house, clear of the doorway.
+			// Inside the western home, clear of the route to its eastern door.
 			Villager villager = new Villager();
-			villager.pos = (height() / 2 - 5) * width() + width() / 2 - 6;
+			villager.pos = (LUMBERJACK_HOUSE_Y + 3) * width() + LUMBERJACK_HOUSE_X + 4;
 			mobs.add(villager);
 		}
 		if (!hasGrandmother) {
 			// West of the stove in the southern house, clear of its entrance.
 			Grandmother grandmother = new Grandmother();
-			grandmother.pos = (height() / 2 + 5) * width() + width() / 2 + 2;
+			grandmother.pos = (SOUTH_HOUSE_Y + 2) * width() + SOUTH_HOUSE_X + 5;
 			mobs.add(grandmother);
 		}
 		if (hayQuest != null && !hasMiron) {
 			Miron miron = new Miron();
-			miron.pos = 28 * width() + 47;
+			// At the northern edge of the field, away from doors and haystacks.
+			miron.pos = 24 * width() + 22;
 			mobs.add(miron);
 		}
 	}
@@ -384,7 +391,8 @@ public class SurfaceLevel extends Level {
 	@Override
 	protected void createItems() {
 		// An ordinary unlocked chest against the eastern wall of the right-hand house.
-		drop(new CartPlank(), (height() / 2 - 5) * width() + width() / 2 + 6).type = Heap.Type.CHEST;
+		drop(new CartPlank(), (NORTH_EAST_HOUSE_Y + 3) * width()
+				+ NORTH_EAST_HOUSE_X + 6).type = Heap.Type.CHEST;
 	}
 
 	@Override

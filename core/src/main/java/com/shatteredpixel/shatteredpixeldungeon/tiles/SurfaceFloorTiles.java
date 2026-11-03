@@ -28,8 +28,8 @@ public class SurfaceFloorTiles {
 	private static final int FIELD = 21;
 	// A new row appended to tiles_surface; each tile blends four grass/field corners.
 	private static final int FIELD_EDGE = 256;
-	private static final int FIELD_X = 11;
-	private static final int FIELD_Y = -1;
+	private static final int FIELD_X = -11;
+	private static final int FIELD_Y = 4;
 
 	// Authored corner samples, not occupied cells: '#' = field, '.' = meadow.
 	// The neighbouring four samples select a rounded edge, corner, or plain field tile.
@@ -79,44 +79,55 @@ public class SurfaceFloorTiles {
 			"  l  l"
 	};
 
-	// Positions are relative to the surface's centre, like the houses and trees.
+	// Positions are relative to the surface's centre and follow the fixed village plan.
 	// Spaces leave the meadow underneath; dots deliberately keep plain grass.
 	private static final Patch[] PATCHES = {
-			// A faint old track from the barn's eastern door towards the village square.
-			new Patch(-17, -2,
-					"dd.dp.   ",
-					" ..dd.   ",
-					"  .pdddd.",
-					"    ..d.."),
-			// Worn ground around the well, through the lane, and towards the doors.
-			new Patch(-5, -11,
-					"..p..d..p..",
-					".d.dd.dd...",
-					"..d.pdd.d..",
-					"...dd.d....",
-					"...d.d.....",
-					"...dd......",
-					"...pdd.....",
-					"..dd.d.....",
-					"...dd.d....",
-					"..d.pdd....",
-					"...dd.dp...",
-					"....p.d....",
-					"....dd.....",
-					".....dd....",
-					"....d.d....",
-					".....d....."),
-			// Small leaf scatters around the four remaining yard oaks.
-			new Patch(-17, -8, LEAF_LITTER),
-			new Patch(4, -14, LEAF_LITTER),
-			new Patch(8, 7, LEAF_LITTER),
+			// The short barn path skirts the western home's northern wall.
+			new Patch(-16, -5,
+					"d",
+					" ddddddddddddd",
+					"             d",
+					"             d",
+					"              d",
+					"              d"),
+			// The north-eastern and south-eastern doors face the compact square.
+			new Patch(1, -4,
+					"   d",
+					" dd",
+					"d",
+					"d",
+					"d",
+					"d",
+					" d",
+					" d",
+					" d",
+					" d"),
+			// A short branch reaches the cart at the forest entrance.
+			new Patch(2, 1,
+					"ddddd",
+					"     dddddddd  dd",
+					"             dd"),
+			// The track fades inside the small woodland nook.
+			new Patch(18, -6,
+					"d",
+					" d",
+					" d",
+					" d",
+					"d",
+					"d",
+					"d"),
+			// Worn ground around the well and the western doorway.
+			new Patch(-3, -1, " dddd", "dd  d", " dddd"),
+			// Sparse leaf litter beneath the four yard oaks.
+			new Patch(-24, -6, LEAF_LITTER),
+			new Patch(-2, -15, LEAF_LITTER),
+			new Patch(8, 8, LEAF_LITTER),
 			new Patch(-18, -1, LEAF_LITTER),
-			// Loose straw beside the southern cart; the haystacks now stand on field ground.
-			new Patch(6, 7, " s  ", "s s ", " s  "),
-			// A few flowers at the quieter outer edges of the settlement.
-			new Patch(-14, 7, " f   ", "   f ", "f    "),
-			new Patch(8, -7, "  f  ", "f   f", "   f "),
-			new Patch(0, 12, " f  f ", "   f  ", "f     ")
+			// A little straw on the cart's parking place beside the forest path.
+			new Patch(13, 3, " s  ", "s s ", " s  "),
+			new Patch(-12, 3, " f   ", "   f ", "f    "),
+			new Patch(9, -2, "  f  ", "f   f", "   f "),
+			new Patch(5, 9, " f  f ", "   f  ", "f     ")
 	};
 
 	public static int getVisual(int pos, int width, int height) {

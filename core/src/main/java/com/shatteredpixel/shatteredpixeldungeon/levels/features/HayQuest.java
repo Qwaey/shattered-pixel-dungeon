@@ -24,8 +24,9 @@ import com.watabou.utils.Bundle;
 // One authored encounter. Its state belongs to this particular surface level.
 public class HayQuest implements Bundlable {
 
-	public static final int THIRD_STACK_X = 54;
-	public static final int THIRD_STACK_Y = 28;
+	public static final int FIRST_STACK_X = 19, FIRST_STACK_Y = 27;
+	public static final int SECOND_STACK_X = 24, SECOND_STACK_Y = 26;
+	public static final int THIRD_STACK_X = 24, THIRD_STACK_Y = 30;
 	private static final int REWARD_DEW = 3;
 
 	private boolean accepted, released, killed, completed;
@@ -41,8 +42,8 @@ public class HayQuest implements Bundlable {
 	}
 
 	private boolean emptyStack(int cell) {
-		return cell == cell(49, 29) || cell == cell(50, 29)
-				|| cell == cell(54, 31) || cell == cell(55, 31);
+		return cell == cell(FIRST_STACK_X, FIRST_STACK_Y) || cell == cell(FIRST_STACK_X + 1, FIRST_STACK_Y)
+				|| cell == cell(SECOND_STACK_X, SECOND_STACK_Y) || cell == cell(SECOND_STACK_X + 1, SECOND_STACK_Y);
 	}
 
 	private boolean thirdStack(int cell) {
@@ -74,7 +75,8 @@ public class HayQuest implements Bundlable {
 
 	private boolean releaseBeetle() {
 		if (level() == null || released) return false;
-		int spawn = cell(THIRD_STACK_X + 1, THIRD_STACK_Y + 1);
+		// Emerge beside the lowest stack, clear of the hay when approached from the north.
+		int spawn = cell(THIRD_STACK_X - 1, THIRD_STACK_Y);
 		if (!Dungeon.level.passable[spawn] || Actor.findChar(spawn) != null
 				|| Dungeon.level.heaps.get(spawn) != null) return false;
 		Senogryz beetle = new Senogryz();
@@ -179,7 +181,8 @@ public class HayQuest implements Bundlable {
 	}
 
 	public String stackDesc(int x, int y) {
-		if ((x == 49 && y == 29) || (x == 54 && y == 31)) return Messages.get(this, "hay");
+		if ((x == FIRST_STACK_X && y == FIRST_STACK_Y)
+				|| (x == SECOND_STACK_X && y == SECOND_STACK_Y)) return Messages.get(this, "hay");
 		if (x != THIRD_STACK_X || y != THIRD_STACK_Y) return null;
 		return Messages.get(this, killed ? "quiet" : released ? "fighting" : "hay");
 	}

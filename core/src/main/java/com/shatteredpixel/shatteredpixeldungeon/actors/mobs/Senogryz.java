@@ -26,7 +26,7 @@ public class Senogryz extends Mob {
 
 	{
 		spriteClass = SenogryzSprite.class;
-		HP = HT = 18;
+		HP = HT = 24;
 		defenseSkill = 4;
 		EXP = 4;
 		HUNTING = new Hunting();
