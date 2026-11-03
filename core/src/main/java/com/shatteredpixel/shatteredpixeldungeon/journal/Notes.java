@@ -144,8 +144,6 @@ public class Notes {
 		GRANDMOTHER,
 		HANDCART,
 		HAY_FIELD,
-		HAY_EGGS,
-		HAY_DELIVERY,
 		HAY_REWARD,
 
 		DEMON_SPAWNER;
@@ -216,8 +214,6 @@ public class Notes {
 				case HANDCART:
 					return new Image(new LumberjackSprite());
 				case HAY_FIELD:
-				case HAY_EGGS:
-				case HAY_DELIVERY:
 				case HAY_REWARD:
 					return new Image(new MironSprite());
 				case TROLL:
@@ -282,8 +278,6 @@ public class Notes {
 				case GRANDMOTHER:   return Messages.get(Landmark.class, "grandmother_desc");
 				case HANDCART:      return Messages.get(Landmark.class, "handcart_desc");
 				case HAY_FIELD:
-				case HAY_EGGS:
-				case HAY_DELIVERY:
 				case HAY_REWARD:
 					return Messages.get(Landmark.class, landmark.name() + "_desc");
 

@@ -14,7 +14,8 @@ public class MironSprite extends MobSprite {
 		texture(Assets.Sprites.MIRON);
 		TextureFilm frames = new TextureFilm(texture, 16, 16);
 		idle = new Animation(1, true);
-		idle.frames(frames, 0);
+		// The same unhurried head-turn rhythm as the hero's idle animation.
+		idle.frames(frames, 0, 0, 0, 1, 0, 0, 1, 1);
 		run = idle.clone();
 		attack = idle.clone();
 		die = new Animation(1, false);

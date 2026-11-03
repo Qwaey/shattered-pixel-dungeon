@@ -106,16 +106,10 @@ public class SurfaceFloorTiles {
 					".....dd....",
 					"....d.d....",
 					".....d....."),
-			// Small leaf scatters around the ten deciduous trees.
+			// Small leaf scatters around the four remaining yard oaks.
 			new Patch(-17, -8, LEAF_LITTER),
-			new Patch(-14, -14, LEAF_LITTER),
-			new Patch(-4, -15, LEAF_LITTER),
 			new Patch(4, -14, LEAF_LITTER),
-			new Patch(12, -10, LEAF_LITTER),
-			new Patch(7, 0, LEAF_LITTER),
 			new Patch(8, 7, LEAF_LITTER),
-			new Patch(-4, 13, LEAF_LITTER),
-			new Patch(-11, 9, LEAF_LITTER),
 			new Patch(-18, -1, LEAF_LITTER),
 			// Loose straw beside the southern cart; the haystacks now stand on field ground.
 			new Patch(6, 7, " s  ", "s s ", " s  "),

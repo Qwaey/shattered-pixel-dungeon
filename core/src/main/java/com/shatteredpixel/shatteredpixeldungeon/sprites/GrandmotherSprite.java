@@ -31,8 +31,15 @@ public class GrandmotherSprite extends MobSprite {
 		texture(Assets.Sprites.GRANDMOTHER);
 		TextureFilm frames = new TextureFilm(texture, 16, 16);
 
-		idle = new Animation(1, true);
-		idle.frames(frames, 0);
+		// Hold the original pose for 5.875 seconds, then blink for 0.125 seconds.
+		idle = new Animation(8, true);
+		idle.frames(frames,
+				0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 1);
 		run = idle.clone();
 		attack = idle.clone();
 		die = new Animation(1, false);

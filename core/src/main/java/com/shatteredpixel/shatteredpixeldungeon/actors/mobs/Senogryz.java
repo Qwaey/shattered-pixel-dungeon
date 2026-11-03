@@ -22,6 +22,7 @@ public class Senogryz extends Mob {
 
 	private int chargeCell = -1;
 	private boolean recovering;
+	private boolean hayQuestBeetle;
 
 	{
 		spriteClass = SenogryzSprite.class;
@@ -34,6 +35,10 @@ public class Senogryz extends Mob {
 
 	public boolean isPreparing() {
 		return chargeCell >= 0;
+	}
+
+	public void markHayQuestBeetle() {
+		hayQuestBeetle = true;
 	}
 
 	@Override
@@ -58,8 +63,11 @@ public class Senogryz extends Mob {
 
 	@Override
 	public void die(Object cause) {
+		boolean reportQuestDeath = hayQuestBeetle;
+		hayQuestBeetle = false;
 		super.die(cause);
-		if (Dungeon.level instanceof SurfaceLevel && ((SurfaceLevel) Dungeon.level).hayQuest() != null) {
+		if (reportQuestDeath && Dungeon.level instanceof SurfaceLevel
+				&& ((SurfaceLevel) Dungeon.level).hayQuest() != null) {
 			((SurfaceLevel) Dungeon.level).hayQuest().beetleDied();
 		}
 	}
@@ -72,6 +80,15 @@ public class Senogryz extends Mob {
 	private class Hunting extends Mob.Hunting {
 		@Override
 		public boolean act(boolean enemyInFOV, boolean justAlerted) {
+			if (enemyInFOV && !isCharmedBy(enemy) && Dungeon.level.adjacent(pos, enemy.pos)) {
+				// Close combat takes priority over winding up or recovering from a charge.
+				chargeCell = -1;
+				recovering = false;
+				enemySeen = true;
+				recentlyAttackedBy.clear();
+				target = enemy.pos;
+				return doAttack(enemy);
+			}
 			if (recovering) {
 				recovering = false;
 				sprite.idle();
@@ -153,6 +170,7 @@ public class Senogryz extends Mob {
 		super.storeInBundle(bundle);
 		bundle.put("charge_cell", chargeCell);
 		bundle.put("recovering", recovering);
+		bundle.put("hay_quest_beetle", hayQuestBeetle);
 	}
 
 	@Override
@@ -160,5 +178,6 @@ public class Senogryz extends Mob {
 		super.restoreFromBundle(bundle);
 		chargeCell = bundle.getInt("charge_cell");
 		recovering = bundle.getBoolean("recovering");
+		hayQuestBeetle = bundle.getBoolean("hay_quest_beetle");
 	}
 }

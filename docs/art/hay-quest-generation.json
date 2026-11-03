@@ -1,62 +1,25 @@
 {
   "tool": "built-in image_gen",
   "transparent_background": true,
+  "date": "2026-11-03",
   "assets": [
     {
       "name": "miron",
-      "source": "exec-7a2fabde-fbf1-4a18-b6f4-fca23502e17c.png",
-      "prompt": "Use case: style-transfer. Asset type: corrected production 16x16 pixel NPC sprite for Shattered Pixel Dungeon.\nINPUT 1 is the ANATOMY AND PIXEL-GRID TEMPLATE: the actual original Warrior idle frame in a 16x16 transparent cell enlarged exactly 32x to 512x512. INPUT 2 is IDENTITY REFERENCE ONLY: the current farmer Miron, whose overly slim body and long legs must be corrected. INPUT 3 is STYLE SUPPORT: actual six original hero classes, enlarged nearest neighbour.\nRepaint INPUT 1 as Miron, a friendly stocky medieval farmer. Copy the Warrior's actual original anatomy, silhouette mass, tiny pixel grammar, compact pose, skin palette, very large broad head, thick wide SHORT torso, and extremely short stubby legs. This is a costume repaint of an original game sprite, not a new character illustration. Keep the original head / face in the upper half, head nearly as wide as shoulders. Give him a thin flat straw hat, brown hair and broad brown moustache, cream work shirt, muted olive green vest, brown trousers and boots; empty hands at his sides, remove dagger. Preserve his three-quarter view facing right.\nCRITICAL PROPORTIONS on the 16x16 native grid: flat straw hat rows 0-1; broad round head / cheeks / moustache rows 2-7, about 9-10 pixels wide; WIDE thick torso and arms rows 8-11, about 10 pixels wide, no narrow waist; tiny squat legs and boots rows 12-14, no long shins; row 15 entirely transparent. Hat may span 12 pixels but must not add height. Full figure centred in columns 2-13 with maximum 12x15 bounding box and bottom at row 14. Thick compact body like the actual Warrior, not thin body from input 2.\nPIXEL GRID INVARIANT: the entire square output must remain exactly the same 16x16 logical grid as INPUT 1. Each logical pixel is ONE large uniform flat colour square. Keep canvas framing and sprite's original native scale. Very few flat muted colours, soft brown outlines, simple one-pixel eyes or eye shadow. No internal fine detail in pixel squares, no antialiasing, no gradients, no glossy eyes, no black heavy contour, no realistic anatomy, no tall slender body, no long arms or legs, no oversized tall hat, no scenery, no shadow, no labels or grid. Exactly ONE sprite, no panels. GENUINE transparent background. Make this look like an additional ORIGINAL Shattered Pixel Dungeon character at 1x scale, matching the supplied actual game sprites.",
-      "previous_source": "exec-1d85c04c-90fd-4e34-9037-d4c87d6157ff.png",
+      "source": "miron-idle-generated.png",
+      "tool": "built-in image_gen",
+      "transparent_background": true,
+      "prompt": "Use case: identity-preserve. Asset type: two-frame idle sprite sheet for Shattered Pixel Dungeon NPC Miron. Edit target Image 1: current 16x16 Miron, a straw-hatted farmer with brown moustache, cream shirt, muted green waistcoat, brown trousers and boots. Image 2 is a comparison with the real warrior, lumberjack and Miron; use the final farmer as identity. Image 3 shows actual hero idle frame pairs: follow their very simple pixel language and tiny head-turn animation. Main request: repair Miron's strange eyes and create TWO consistent idle frames with a small head turn, matching actual 16x16 game resolution. Output a single transparent 2:1 horizontal sheet, conceptually EXACTLY 32x16 logical pixels, each logical pixel an identical flat-color square, nearest-neighbor enlarged 32x to 1024x512. Left 16x16 cell: neutral three-quarter head. Right 16x16 cell: the SAME body, feet, arms, clothing and baseline in EXACTLY the same positions; only head/hat turn slightly to glance sideways. Character footprint around 12x15 logical pixels in each 16x16 cell, boots on row 15, empty margins. Crucial face: warm plain skin with very small simple dark brown eyes (one logical pixel per visible eye); a clear bridge of skin between eyes; compact brown moustache below a tiny nose. NO large white eye band, NO spectacles, NO glowing eyes, NO oversized eyeballs, NO facial checkerboard, NO smile line resembling extra eyes. Preserve broad head and short body/legs of heroes. Keep hat, moustache, cream shirt, green vest and brown boots recognizable. Flat restrained palette of roughly 16 colors; crisp square pixels with no antialiasing, outlines soft dark brown not large pure-black masses. No rake, no box, no props, no text, no grid, no shadow outside sprite, no checkerboard background. Exact frame registration and truly transparent background are essential.",
       "references": [
-        "miron-warrior-template.png",
-        "miron-before-reference.png",
+        "miron-before-animation.png",
+        "miron-style-comparison.png",
         "water-quest-hero-reference.png"
-      ]
+      ],
+      "preparation": "Two alpha crops, 12x15 inside 16x16 cells; nearest sampling at x+0.5, y+0.85; 27-color palette; identical body below row 8. Sheet 32x16. No CLI/API used."
     },
     {
       "name": "senogryz",
       "source": "exec-db5176ab-1d16-4a45-bc00-8a8c7f635431.png",
       "prompt": "Use case: stylized-concept. Production bitmap asset for Shattered Pixel Dungeon, extremely low resolution classic pixel art, muted earthy colours, dark one-native-pixel outlines, broad simple clusters of solid colour, NO antialiasing, NO subpixel details, NO smooth gradients, NO lettering, NO grid, NO ground or shadows. GENUINE transparent background. Render as large uniform square pixels, suitable for nearest-neighbour reduction to native resolution. ONE sprite sheet of the SAME cat-sized burrowing hay beetle in FOUR 16x16 logical-pixel cells arranged 2 by 2, transparent empty margins between silhouettes. Full canvas exactly 32x32 logical pixels. Top left: idle facing three-quarter right. Top right: walking, same silhouette with forelegs forward. Bottom left: crouched charge wind-up with rake-like front legs scraping the soil. Bottom right: dead beetle on side. Beetle has squat broad dark brown chitin shell, a few dry golden hay stems on its back, six short legs, two broad rake-like front claws, small dark head with amber eyes. Actual tiny game enemy sprite proportions, creature occupies 14x12 pixels per cell, same size in each cell. No scenery."
-    },
-    {
-      "name": "rake",
-      "source": "exec-4ff6d7c4-5080-4d5b-a75b-089b9f06be2e.png",
-      "prompt": "Use case: stylized-concept. Production bitmap asset for Shattered Pixel Dungeon, extremely low resolution classic pixel art, muted earthy colours, dark one-native-pixel outlines, broad simple clusters of solid colour, NO antialiasing, NO subpixel details, NO smooth gradients, NO lettering, NO grid, NO ground or shadows. GENUINE transparent background. Render as large uniform square pixels, suitable for nearest-neighbour reduction to native resolution. ONE medieval wooden hay rake inventory icon. Diagonal long brown wooden handle, perpendicular broad wooden head with four clearly separated short teeth at upper right. Full canvas 16x16 logical pixels, rake 14x14 pixels centred, chunky silhouette. One object only."
-    },
-    {
-      "name": "shell",
-      "source": "exec-b5575539-9e24-4ef2-9347-9dc0bcff6b5d.png",
-      "prompt": "Use case: stylized-concept. Production bitmap asset for Shattered Pixel Dungeon, extremely low resolution classic pixel art, muted earthy colours, dark one-native-pixel outlines, broad simple clusters of solid colour, NO antialiasing, NO subpixel details, NO smooth gradients, NO lettering, NO grid, NO ground or shadows. GENUINE transparent background. Render as large uniform square pixels, suitable for nearest-neighbour reduction to native resolution. ONE empty shed carapace of a cat-sized hay beetle, split open along its back, hollow underneath, with two broken leg husks, no live creature. Warm desaturated dark brown chitin, pale cracked edges, a few straw strands. Top-down three-quarter tiny RPG ground prop. Full 16x16 logical pixel canvas, object 14x11 pixels centred. One object only."
-    },
-    {
-      "name": "eggs",
-      "source": "exec-7fa8ab34-c5b2-4acc-beef-b7fb2705a9d8.png",
-      "prompt": "Use case: stylized-concept. Production bitmap asset for Shattered Pixel Dungeon, extremely low resolution classic pixel art, muted earthy colours, dark one-native-pixel outlines, broad simple clusters of solid colour, NO antialiasing, NO subpixel details, NO smooth gradients, NO lettering, NO grid, NO ground or shadows. GENUINE transparent background. Render as large uniform square pixels, suitable for nearest-neighbour reduction to native resolution. ONE clutch of five large ivory pale green insect eggs nestled together in a little ring of dry golden hay. Tiny RPG ground prop, top-down three-quarter view, chunky readable egg shapes, dark olive shadows. Full canvas 16x16 logical pixels, nest 14x11 centred. No creature."
-    },
-    {
-      "name": "box",
-      "source": "exec-fe61416b-3e42-4446-bc63-2b780d6ca139.png",
-      "prompt": "Use case: stylized-concept. Production bitmap asset for Shattered Pixel Dungeon, extremely low resolution classic pixel art, muted earthy colours, dark one-native-pixel outlines, broad simple clusters of solid colour, NO antialiasing, NO subpixel details, NO smooth gradients, NO lettering, NO grid, NO ground or shadows. GENUINE transparent background. Render as large uniform square pixels, suitable for nearest-neighbour reduction to native resolution. ONE open old rectangular woven willow carrying box with two small handles, containing five pale ivory-green insect eggs nestled in golden hay. Tiny medieval RPG inventory icon, three-quarter view from above. Brown wicker with simple chunky weave. Full canvas 16x16 logical pixels, box 14x12 pixels centred. One object only."
-    },
-    {
-      "name": "tracks",
-      "source": "exec-d8535508-b53c-4c87-bfd3-af604fe2d305.png",
-      "prompt": "Use case: stylized-concept. Production bitmap asset for Shattered Pixel Dungeon, extremely low resolution classic pixel art, muted earthy colours, dark one-native-pixel outlines, broad simple clusters of solid colour, NO antialiasing, NO subpixel details, NO smooth gradients, NO lettering, NO grid, NO ground or shadows. GENUINE transparent background. Render as large uniform square pixels, suitable for nearest-neighbour reduction to native resolution. ONE tiny RPG ground decal: two short trails of tiny dark brown three-pronged beetle footprints, diagonally across otherwise fully transparent canvas, six footprints total. Full canvas 16x16 logical pixels. Each footprint only three native pixels in a clear fork shape. No ground, no beetle, no text."
-    },
-    {
-      "name": "rope",
-      "source": "exec-5370aad9-99cd-41b4-ab7e-51210ee1af7c.png",
-      "prompt": "Use case: stylized-concept. Production bitmap asset for Shattered Pixel Dungeon, extremely low resolution classic pixel art, muted earthy colours, dark one-native-pixel outlines, broad simple clusters of solid colour, NO antialiasing, NO subpixel details, NO smooth gradients, NO lettering, NO grid, NO ground or shadows. GENUINE transparent background. Render as large uniform square pixels, suitable for nearest-neighbour reduction to native resolution. ONE small broken twisted straw-coloured hay-binding rope on the ground, bent like a shallow U, two ends cleanly gnawed through with a few fibres sticking out. Tiny RPG ground clue prop viewed from above, simple dark brown and beige pixel clusters. Full canvas 16x16 logical pixels, rope occupies 12x7 pixels centred. One object only."
-    },
-    {
-      "name": "empty_box",
-      "source": "exec-95a58df0-5e74-4377-9700-e7d2f83fd1b4.png",
-      "prompt": "Use case: stylized-concept. ONE production 16x16 logical pixel inventory icon for Shattered Pixel Dungeon: empty old rectangular brown woven willow carrying box with two small handles, lined with a little dry golden hay, NO eggs. Top down three-quarter view, chunky pixel clusters, dark one pixel contour, muted brown palette. Box 14x12 pixels centred on genuine transparent background. Output enlarged solid square pixels, no antialiasing, no gradients, no scenery, no ground, no text."
-    },
-    {
-      "name": "refuge",
-      "source": "exec-2422a5d0-0cbf-428d-86e2-5792859903c1.png",
-      "prompt": "Use case: stylized-concept. ONE production tiny ground decal for Shattered Pixel Dungeon, exactly 16x16 logical pixels enlarged as solid square pixels. A shallow oval hollow in dark brown earth lined with a few golden dry hay stems, two short weathered tree roots partly enclosing it. Top-down RPG view, 14x10 pixel silhouette, muted earth and olive colours, dark one-pixel outlines. It is a small sheltered hollow at a forest edge for an insect nest. Genuine transparent background outside the hollow, no grass tile, no eggs, no creature, no text, no scenery, no antialiasing."
     }
   ]
 }

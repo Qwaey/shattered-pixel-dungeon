@@ -13,6 +13,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.HayQuest;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MironSprite;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.noosa.Game;
@@ -38,9 +39,12 @@ public class Miron extends NPC {
 		if (c == Dungeon.hero) Game.runOnRenderThread(new Callback() {
 			@Override
 			public void call() {
-				if (Dungeon.level instanceof SurfaceLevel) {
-					HayQuest quest = ((SurfaceLevel) Dungeon.level).hayQuest();
-					if (quest != null) quest.talk(Miron.this);
+				HayQuest quest = Dungeon.level instanceof SurfaceLevel
+						? ((SurfaceLevel) Dungeon.level).hayQuest() : null;
+				if (quest != null && quest.rewardReady()) {
+					quest.talk(Miron.this);
+				} else {
+					showTopics();
 				}
 			}
 		});
@@ -49,6 +53,33 @@ public class Miron extends NPC {
 
 	public void say(String key) {
 		GameScene.show(new WndQuest(this, Messages.get(this, key)));
+	}
+
+	private void showTopics() {
+		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
+				Messages.get(this, "greeting"), Messages.get(this, "ask_story"),
+				Messages.get(this, "ask_work"), Messages.get(this, "ask_hay"),
+				Messages.get(this, "goodbye")) {
+			@Override
+			protected void onSelect(int index) {
+				if (index == 0 || index == 1) {
+					showReply(index == 0 ? "story" : "work");
+				} else if (index == 2 && Dungeon.level instanceof SurfaceLevel) {
+					HayQuest quest = ((SurfaceLevel) Dungeon.level).hayQuest();
+					if (quest != null) quest.talk(Miron.this);
+				}
+			}
+		});
+	}
+
+	private void showReply(String topic) {
+		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
+				Messages.get(this, topic), Messages.get(this, "back"), Messages.get(this, "goodbye")) {
+			@Override
+			protected void onSelect(int index) {
+				if (index == 0) showTopics();
+			}
+		});
 	}
 
 	@Override

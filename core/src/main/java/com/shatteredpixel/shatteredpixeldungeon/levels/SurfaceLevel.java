@@ -108,7 +108,6 @@ public class SurfaceLevel extends Level {
 		plantTrees(centerX, centerY);
 		decorateYards(centerX, centerY);
 		hayQuest = new HayQuest();
-		hayQuest.decorate(this);
 
 		int stairs = (barnY + 4) * width() + barnX + 3;
 		map[stairs] = Terrain.EXIT;
@@ -183,17 +182,11 @@ public class SurfaceLevel extends Level {
 
 	private void plantTrees(int x, int y) {
 		placeExterior(x - 15, y - 6, SurfaceExterior.Type.OAK);
-		placeExterior(x - 12, y - 12, SurfaceExterior.Type.BIRCH);
 		placeExterior(x - 7, y - 12, SurfaceExterior.Type.PINE);
-		placeExterior(x - 2, y - 13, SurfaceExterior.Type.APPLE_TREE);
 		placeExterior(x + 6, y - 12, SurfaceExterior.Type.OAK);
-		placeExterior(x + 14, y - 8, SurfaceExterior.Type.BIRCH);
 		placeExterior(x + 15, y - 2, SurfaceExterior.Type.PINE);
-		placeExterior(x + 9, y + 2, SurfaceExterior.Type.APPLE_TREE);
 		placeExterior(x + 10, y + 9, SurfaceExterior.Type.OAK);
 		placeExterior(x + 5, y + 15, SurfaceExterior.Type.PINE);
-		placeExterior(x - 2, y + 15, SurfaceExterior.Type.BIRCH);
-		placeExterior(x - 9, y + 11, SurfaceExterior.Type.APPLE_TREE);
 		placeExterior(x - 11, y + 3, SurfaceExterior.Type.PINE);
 		placeExterior(x - 16, y + 1, SurfaceExterior.Type.OAK);
 	}
@@ -205,9 +198,10 @@ public class SurfaceLevel extends Level {
 		customTiles.add(cart);
 		placeExterior(x - 12, y - 5, SurfaceExterior.Type.CHOPPING_BLOCK);
 		placeExterior(x - 8, y, SurfaceExterior.Type.CHOPPING_BLOCK);
-		// Both haystacks stay inside the harvested field east of the houses.
+		// All three haystacks stay inside the harvested field east of the houses.
 		placeExterior(x + 13, y + 3, SurfaceExterior.Type.HAYSTACK);
 		placeExterior(x + 18, y + 5, SurfaceExterior.Type.HAYSTACK);
+		placeExterior(HayQuest.THIRD_STACK_X, HayQuest.THIRD_STACK_Y, SurfaceExterior.Type.HAYSTACK);
 		placeExterior(x + 7, y + 7, SurfaceExterior.Type.HANDCART);
 	}
 

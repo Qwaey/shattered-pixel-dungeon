@@ -1,0 +1,41 @@
+{
+  "tool": "built-in image_gen",
+  "transparent_background": true,
+  "date": "2026-11-03",
+  "characters": {
+    "grandmother": {
+      "ru": "Агафья",
+      "en": "Agafya"
+    },
+    "lumberjack": {
+      "ru": "Степан",
+      "en": "Stepan"
+    }
+  },
+  "assets": [
+    {
+      "name": "agafya_blink",
+      "source": "agafya-blink-generated.png",
+      "reference": "agafya-idle-reference.png",
+      "prompt": "Use case: precise-object-edit. Asset type: alternate blink frame for the existing Shattered Pixel Dungeon NPC Agafya. Image 1 is the exact EDIT TARGET: a 16x16 logical-pixel sprite enlarged nearest-neighbour to 512x512. Make only a TWO-LOGICAL-PIXEL EDIT. Grid coordinates are zero-based, each cell is 32x32 in the reference. Replace the dark open eye at column 8 row 5 and the dark open eye at column 11 row 5 with subtle warm medium-brown CLOSED EYELID / SKIN colors similar to neighbouring cheek pixels (#AD8062 and #AB7C5D). No black open pupil, no white eye highlights in these two cells. This will be a very brief 0.125-second blink. Keep absolutely every other logical pixel, position, exact 16x16 grid, face, grey hair and bun, dress, apron, arms, feet, silhouette and transparent background unchanged. One single 16x16 logical-pixel frame only, enlarged 64x as uniform flat-colored square blocks. DO NOT make a sheet or add frames. DO NOT redraw, clean up, recolor, move or resize the character. No other animation pose. No antialiasing, gradients, extra detail, text, grid lines, ground, shadow or props. Genuinely transparent background.",
+      "preparation": "Frame 0 is unchanged agafya-before-animation.png. In frame 1 only pixels (8,5) and (11,5) are sampled from the generated edit and mapped to the existing two cheek colors. Two 16x16 frames on a 32x16 sheet. Idle 8 fps: 47 neutral frames, 1 blink (5.875s + 0.125s)."
+    },
+    {
+      "name": "bucket_empty",
+      "source": "bucket-empty-generated.png",
+      "references": [
+        "bucket-before-redesign.png",
+        "village-items-before.png"
+      ],
+      "prompt": "Use case: precise-object-edit. Asset type: redesigned empty wooden bucket inventory icon for Shattered Pixel Dungeon. Image 1 is the EDIT TARGET: the existing tiny wooden bucket. Image 2 is STYLE REFERENCE ONLY: actual game item atlas. Redesign this bucket for much clearer readability at native 16x16 game resolution. Remove the handle COMPLETELY: no arch, no strap, no side ears or lugs. Make the wooden bucket wide, squat, chunky and slightly more cartoon-like, matching the old-school game's items. Full square output corresponds EXACTLY to 16x16 logical pixels, each logical pixel one large flat color square. Center a 14-pixel-wide by roughly 12-pixel-tall bucket, rows 3 through 14 with transparent top margins and bottom row. Wide thick oval wooden rim, easily readable dark empty opening about 9 pixels wide and 2-3 pixels deep; generous warm golden-brown staves as 3-4 large clean color clusters; two broad grey metal hoops with simple highlights. Body gently tapers to a rounded 10-pixel-wide bottom. Slight three-quarter front view. A strong dark brown outline one logical pixel thick, clear silhouette, flat restrained brown/ochre/grey palette around 12 colors, NO fine woodgrain, NO photorealism, NO tiny internal scratches, NO soft shading, NO blur or antialiasing. Not a barrel or tub: recognizable open BUCKET with an open top, but absolutely NO HANDLE. No water, no liquid, no text, grid, labels, ground, shadow, extra objects or multiple icons. ONE empty bucket on genuine transparent background. Render enlarged as crisp uniform square blocks, preserving the simple 16 by 16 logical pixel grid.",
+      "preparation": "Alpha crop >=192, nearest sampling to a 14x12 silhouette at (1,3) in a 16x16 PNG; eleven flat wood/metal colors. No handle. Item atlas slot 475 uses the cropped 14x12 rectangle."
+    },
+    {
+      "name": "bucket_water",
+      "source": "bucket-water-generated.png",
+      "reference": "bucket-reference.png",
+      "prompt": "Use case: precise-object-edit. Asset type: full-water state of the supplied Shattered Pixel Dungeon bucket inventory icon. Image 1 is the EXACT EDIT TARGET, a native 16x16 pixel bucket enlarged 32x to 512x512. Preserve the entire exact logical grid and ALL bucket wood, outlines, oval rim, metal bands, silhouette, position, proportions, no-handle design and alpha. Change ONLY the 16 dark opening pixels at zero-based columns 4 through 11 inclusive in rows 5 and 6 into a clearly visible BLUE WATER SURFACE. Those are the two horizontal dark rows just INSIDE the thick wooden rim; do not change the brown inner back wall in row 4 or the front wooden lip in row 7. Top water row 5: muted deep blue/cyan, with a few large pale cyan reflection pixels near the left. Row 6: a slightly darker blue. Use only 3-4 flat colors such as #174D72, #2B779B, #4AA6C1 and #89D2DF. No splashes, no droplets, no handle, no extra objects, no ripples outside this 8-by-2-pixel opening. One full 16x16 logical-pixel image, same composition as target, enlarged 64x as crisp uniform flat-colored squares. Genuinely transparent background, no text, grid lines, labels, ground, blur, antialiasing, fine detail, shadows or scene. Change nothing outside the specified water pixels.",
+      "preparation": "Generated blue water is cropped inside logical source rows 4..7 and columns 3..12, sampled to 8x2, and mapped to four blue tones. Only target columns 4..11 in rows 5..6 change. Slot 476 uses the same 14x12 bounds; every exterior pixel and the alpha channel are unchanged."
+    }
+  ]
+}
