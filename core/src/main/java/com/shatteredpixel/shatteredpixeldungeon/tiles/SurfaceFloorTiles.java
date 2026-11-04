@@ -82,26 +82,6 @@ public class SurfaceFloorTiles {
 	// Positions are relative to the surface's centre and follow the fixed village plan.
 	// Spaces leave the meadow underneath; dots deliberately keep plain grass.
 	private static final Patch[] PATCHES = {
-			// The short barn path skirts the western home's northern wall.
-			new Patch(-16, -5,
-					"d",
-					" ddddddddddddd",
-					"             d",
-					"             d",
-					"              d",
-					"              d"),
-			// The north-eastern and south-eastern doors face the compact square.
-			new Patch(1, -4,
-					"   d",
-					" dd",
-					"d",
-					"d",
-					"d",
-					"d",
-					" d",
-					" d",
-					" d",
-					" d"),
 			// A short branch reaches the cart at the forest entrance.
 			new Patch(2, 1,
 					"ddddd",
@@ -116,8 +96,6 @@ public class SurfaceFloorTiles {
 					"d",
 					"d",
 					"d"),
-			// Worn ground around the well and the western doorway.
-			new Patch(-3, -1, " dddd", "dd  d", " dddd"),
 			// Sparse leaf litter beneath the four yard oaks.
 			new Patch(-24, -6, LEAF_LITTER),
 			new Patch(-2, -15, LEAF_LITTER),
@@ -139,6 +117,8 @@ public class SurfaceFloorTiles {
 		int villageY = y - height / 2;
 		int field = fieldVisual(villageX, villageY);
 		if (field != -1) return field;
+		int path = SurfacePathTiles.getVisual(x, y);
+		if (path != -1) return path;
 		for (Patch patch : PATCHES) {
 			int py = villageY - patch.y;
 			if (py < 0 || py >= patch.rows.length) continue;

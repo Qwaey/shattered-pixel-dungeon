@@ -1,0 +1,82 @@
+{
+  "mode": "built-in image_gen",
+  "date": "2026-11-04",
+  "assets": [
+    {
+      "key": "stump",
+      "sourceFile": "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-948cca86-9da9-45ab-8fa3-8ceea7a0b2b9.png",
+      "workspaceFile": "docs/art/generated/stump-paths/stump.png",
+      "referenced_image_paths": [
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\chopping_block.png"
+      ],
+      "transparent_background": true,
+      "prompt": "Use case: precise-object-edit. Asset: one 16x16 logical pixel environment sprite for Shattered Pixel Dungeon, shown enlarged in the input. Image 1 is the EDIT TARGET: existing chopping block with an axe. Remove ONLY the axe: remove the entire grey metal head and the wooden handle projecting above the stump. Restore the small area of the exposed cut wood where the axe was embedded, using matching muted tan wood pixels. Preserve the stump itself exactly: same lower-half placement, same shape and size, same dark bark silhouette, same existing cut top, same roots, same original pixel grid and original colors. Keep the 16x16 logical grid, uniformly enlarged as hard square pixels, and the exact canvas alignment. The upper area previously occupied by the axe must become genuine transparent alpha. No new objects, no grass, no ground tile, no extra shadows, no other changes. Output exactly one stump without axe on actual transparent background."
+    },
+    {
+      "key": "path_base_a",
+      "sourceFile": "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-fb333938-eac5-4bdb-9783-a32a35483672.png",
+      "workspaceFile": "docs/art/generated/stump-paths/path_base_a.png",
+      "referenced_image_paths": [
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\surface_grass.png",
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\surface_grass_dirt.png"
+      ],
+      "transparent_background": false,
+      "prompt": "Use case: style-transfer. Asset: ONE opaque seamless 16x16 logical pixel ground tile for Shattered Pixel Dungeon. Image 1 is the existing olive meadow grass, image 2 is its lightly worn dirt variant. Make a much more trodden medieval village footpath material: broad patches of compacted earthy brown mud (about 70 percent) with short flattened olive grass islands (30 percent), small muted clods, subtle occasional tiny stones. This is flat WALKABLE GROUND in a top-down orthographic view, not an object and not a full scenic path. Match the exact native coarse 16px texture scale of the references and very subdued contrast. Soil colors only dark desaturated browns #514735 #66543b #716044 #7b694b; grass matches reference #35452c #405735 #4d633a #5c7140. No yellow sand, no paving, no gravel road, no tall grass, no outlines, no perspective, no cast shadows, no gradients, no blur, no text, no margins. Entire square filled edge to edge with texture. Render 16x16 logical square pixels enlarged uniformly. The tile must repeat seamlessly in both directions."
+    },
+    {
+      "key": "path_base_b",
+      "sourceFile": "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-bdb66bfe-aead-49c4-9149-268be8331032.png",
+      "workspaceFile": "docs/art/generated/stump-paths/path_base_b.png",
+      "referenced_image_paths": [
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\surface_grass.png",
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\surface_grass_dirt.png"
+      ],
+      "transparent_background": false,
+      "prompt": "Use case: style-transfer. Asset: ONE opaque seamless 16x16 logical pixel dirt ground tile for the existing Shattered Pixel Dungeon village. Inputs 1 and 2 are style references: original olive grass and lightly trodden grass. Flat top-down compacted medieval footpath mud intermixed with sparse worn olive grass. 70 percent dark desaturated brown mud, 30 percent flattened grass. Match extremely simple coarse 16x16 pixel-cluster scale, subdued contrast, no perspective or raised objects. Earth palette #514735 #66543b #716044 #7b694b; olive grass #35452c #405735 #4d633a #5c7140. Uniformly enlarged logical square pixels, no blur, gradient, text, labels, margins, scenery, paving, sand, cobbles or tall grass. Fill the entire square; seamlessly repeat in both axes. Variant B: the worn grass forms a few small irregular islands toward the upper-left and lower-right, with compact mud in broad connected patches and two tiny dark clods. Avoid obvious stripes or a central emblem."
+    },
+    {
+      "key": "path_base_c",
+      "sourceFile": "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-dc3980e4-1aac-4e79-9279-ea3c9f8c94be.png",
+      "workspaceFile": "docs/art/generated/stump-paths/path_base_c.png",
+      "referenced_image_paths": [
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\surface_grass.png",
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\surface_grass_dirt.png"
+      ],
+      "transparent_background": false,
+      "prompt": "Use case: style-transfer. Asset: ONE opaque seamless 16x16 logical pixel dirt ground tile for the existing Shattered Pixel Dungeon village. Inputs 1 and 2 are style references: original olive grass and lightly trodden grass. Flat top-down compacted medieval footpath mud intermixed with sparse worn olive grass. 70 percent dark desaturated brown mud, 30 percent flattened grass. Match extremely simple coarse 16x16 pixel-cluster scale, subdued contrast, no perspective or raised objects. Earth palette #514735 #66543b #716044 #7b694b; olive grass #35452c #405735 #4d633a #5c7140. Uniformly enlarged logical square pixels, no blur, gradient, text, labels, margins, scenery, paving, sand, cobbles or tall grass. Fill the entire square; seamlessly repeat in both axes. Variant C: slightly more continuous mud through the center, scattered flattened olive blades mainly at the sides and a few tiny darker soil patches. The scale and average color must match the other path tiles."
+    },
+    {
+      "key": "path_edge",
+      "sourceFile": "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-6dc61945-76b2-4f17-96e4-e0c456cd5e2b.png",
+      "workspaceFile": "docs/art/generated/stump-paths/path_edge.png",
+      "referenced_image_paths": [
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\surface_grass.png",
+        "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-fb333938-eac5-4bdb-9783-a32a35483672.png"
+      ],
+      "transparent_background": false,
+      "prompt": "Use case: style-transfer. Asset: ONE opaque 16x16 logical pixel terrain TRANSITION tile for Shattered Pixel Dungeon. Input 1 is the existing plain olive GRASS material. Input 2 is the generated compacted brown muddy FOOTPATH material. Match both materials' subdued colors and coarse low-resolution 16px scale. Make a broad organic broken blending band about 4 logical pixels wide, tiny tufts of flattened grass interlocking with damp compacted soil. Flat orthographic ground, no elevation, no outlines, no shadows, no perspective, no blur, no gradients, no text, no borders. Square tile fills entire canvas, enlarged logical square pixels. Dirt is muted dark brown, never sand yellow. Corners and edges must match the exact material assignments below for seamless tiling. SIDE transition: top half is pure GRASS; bottom half is muddy FOOTPATH. The border crosses the left and right tile edges exactly at their vertical midpoints. Top edge entirely grass, bottom edge entirely footpath. The border gently wanders around the horizontal middle with a soft irregular pixel-clump edge, no straight horizontal cut."
+    },
+    {
+      "key": "path_corner",
+      "sourceFile": "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-b1a6c403-e474-4991-a42c-a8d3b5dcc3eb.png",
+      "workspaceFile": "docs/art/generated/stump-paths/path_corner.png",
+      "referenced_image_paths": [
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\surface_grass.png",
+        "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-fb333938-eac5-4bdb-9783-a32a35483672.png"
+      ],
+      "transparent_background": false,
+      "prompt": "Use case: style-transfer. Asset: ONE opaque 16x16 logical pixel terrain TRANSITION tile for Shattered Pixel Dungeon. Input 1 is the existing plain olive GRASS material. Input 2 is the generated compacted brown muddy FOOTPATH material. Match both materials' subdued colors and coarse low-resolution 16px scale. Make a broad organic broken blending band about 4 logical pixels wide, tiny tufts of flattened grass interlocking with damp compacted soil. Flat orthographic ground, no elevation, no outlines, no shadows, no perspective, no blur, no gradients, no text, no borders. Square tile fills entire canvas, enlarged logical square pixels. Dirt is muted dark brown, never sand yellow. Corners and edges must match the exact material assignments below for seamless tiling. OUTER ROUNDED CORNER of the footpath: FOOTPATH occupies ONLY the lower-right quarter, rounding from right edge midpoint to bottom edge midpoint. The other three quarters are GRASS. Top and left edges entirely grass. Right edge upper half grass and lower half path; bottom edge left half grass and right half path. Organic convex curved mud corner, not a square or diagonal stripe."
+    },
+    {
+      "key": "path_inset",
+      "sourceFile": "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-7f53892a-8351-451f-844a-76585c62fdc4.png",
+      "workspaceFile": "docs/art/generated/stump-paths/path_inset.png",
+      "referenced_image_paths": [
+        "C:\\Users\\Andrey\\AppData\\Local\\Temp\\spd-stump-path-references\\surface_grass.png",
+        "C:\\Users\\Andrey\\.codex\\generated_images\\01a1a652-701f-7080-8b7f-96d2e470034b\\exec-fb333938-eac5-4bdb-9783-a32a35483672.png"
+      ],
+      "transparent_background": false,
+      "prompt": "Use case: style-transfer. Asset: ONE opaque 16x16 logical pixel terrain TRANSITION tile for Shattered Pixel Dungeon. Input 1 is the existing plain olive GRASS material. Input 2 is the generated compacted brown muddy FOOTPATH material. Match both materials' subdued colors and coarse low-resolution 16px scale. Make a broad organic broken blending band about 4 logical pixels wide, tiny tufts of flattened grass interlocking with damp compacted soil. Flat orthographic ground, no elevation, no outlines, no shadows, no perspective, no blur, no gradients, no text, no borders. Square tile fills entire canvas, enlarged logical square pixels. Dirt is muted dark brown, never sand yellow. Corners and edges must match the exact material assignments below for seamless tiling. INNER ROUNDED CORNER: GRASS makes a small rounded concave bite into the FOOTPATH from the upper-left quarter. Other three quarters are FOOTPATH. Bottom and right edges entirely path. Top edge left half grass then right half path; left edge upper half grass then lower half path. Organic curved grass intrusion with tiny interlocking grass tufts; no square corner or straight diagonal."
+    }
+  ]
+}

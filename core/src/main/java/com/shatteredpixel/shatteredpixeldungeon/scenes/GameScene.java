@@ -71,6 +71,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.StartLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
@@ -278,7 +279,9 @@ public class GameScene extends PixelScene {
 		ripples = new Group();
 		terrain.add( ripples );
 
-		DungeonTileSheet.setupVariance(Dungeon.level.map.length, Dungeon.seedCurDepth());
+		// Keep the authored starting room's tile variants identical in every game.
+		long visualSeed = Dungeon.level instanceof StartLevel ? 0L : Dungeon.seedCurDepth();
+		DungeonTileSheet.setupVariance(Dungeon.level.map.length, visualSeed);
 		
 		tiles = new DungeonTerrainTilemap();
 		terrain.add( tiles );

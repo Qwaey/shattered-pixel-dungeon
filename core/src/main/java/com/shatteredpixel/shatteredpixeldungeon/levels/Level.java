@@ -221,7 +221,8 @@ public abstract class Level implements Bundlable {
 		Random.pushGenerator( Dungeon.seedCurDepth() );
 
 		//TODO maybe just make this part of RegularLevel?
-		if (Dungeon.depth > 0 && !Dungeon.bossLevel() && Dungeon.branch == 0) {
+		if (Dungeon.depth > 0 && !Dungeon.bossLevel() && Dungeon.branch == 0
+				&& !(this instanceof StartLevel)) {
 
 			addItemToSpawn(Generator.random(Generator.Category.FOOD));
 
