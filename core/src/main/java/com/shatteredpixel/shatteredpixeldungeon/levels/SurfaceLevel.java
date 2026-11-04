@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -41,17 +40,15 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceBerryBush;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceCobweb;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceForest;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceHandcart;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture.Type;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
-import com.watabou.noosa.audio.Music;
 import com.watabou.utils.Bundle;
 
-public class SurfaceLevel extends Level {
+public class SurfaceLevel extends OutdoorLevel {
 
 	private static final int BARN_X = 8, BARN_Y = 7;
 	private static final int LUMBERJACK_HOUSE_X = 17, LUMBERJACK_HOUSE_Y = 16;
@@ -62,6 +59,19 @@ public class SurfaceLevel extends Level {
 	private static final int PARKED_CART_X = 42, PARKED_CART_Y = 23;
 
 	private HayQuest hayQuest;
+
+	@Override
+	protected boolean isHouseCell(int x, int y) {
+		return insideHouse(x, y, BARN_X, BARN_Y, 8, 7)
+				|| insideHouse(x, y, LUMBERJACK_HOUSE_X, LUMBERJACK_HOUSE_Y, 8, 6)
+				|| insideHouse(x, y, NORTH_EAST_HOUSE_X, NORTH_EAST_HOUSE_Y, 8, 6)
+				|| insideHouse(x, y, SOUTH_HOUSE_X, SOUTH_HOUSE_Y, 8, 6);
+	}
+
+	@Override
+	protected int sectionArrivalCell() {
+		return (height() - 5) * width() + 28;
+	}
 
 	public HayQuest hayQuest() {
 		return hayQuest;
@@ -77,21 +87,6 @@ public class SurfaceLevel extends Level {
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		hayQuest = (HayQuest) bundle.get("hay_quest");
-	}
-
-	@Override
-	public String tilesTex() {
-		return Assets.Environment.TILES_SURFACE;
-	}
-
-	@Override
-	public String waterTex() {
-		return Assets.Environment.WATER_SEWERS;
-	}
-
-	@Override
-	public void playLevelMusic() {
-		Music.INSTANCE.play(Assets.Music.THEME_1, true);
 	}
 
 	@Override
@@ -123,13 +118,12 @@ public class SurfaceLevel extends Level {
 		map[stairs] = Terrain.EXIT;
 		transitions.add(new LevelTransition(this, stairs,
 				LevelTransition.Type.REGULAR_EXIT, 1, 0, LevelTransition.Type.SURFACE));
+		// The southern path leads into the woodland's northern edge.
+		LevelTransition woodland = new LevelTransition(this, (height() - 2) * width() + 28,
+				LevelTransition.Type.SECTION, -1, 0, LevelTransition.Type.SECTION);
+		woodland.set(28, height() - 3, 29, height() - 2);
+		transitions.add(woodland);
 		return true;
-	}
-
-	private void paintHouse(int x, int y, int w, int h, int doorX, int doorY) {
-		Painter.fill(this, x, y, w, h, Terrain.WALL);
-		Painter.fill(this, x + 1, y + 1, w - 2, h - 2, Terrain.EMPTY_SP);
-		Painter.set(this, doorX, doorY, Terrain.DOOR);
 	}
 
 	private void furnishBarn(int x, int y) {
@@ -180,16 +174,6 @@ public class SurfaceLevel extends Level {
 		placeFurniture(x + 4, y + 3, Type.STOOL);
 	}
 
-	private void placeFurniture(int x, int y, Type type) {
-		placeFurniture(x, y, type, false);
-	}
-
-	private void placeFurniture(int x, int y, Type type, boolean abandoned) {
-		SurfaceFurniture furniture = new SurfaceFurniture(type, x, y, abandoned);
-		Painter.fill(this, x, y, furniture.tileW, furniture.tileH, Terrain.CUSTOM_DECO);
-		customTiles.add(furniture);
-	}
-
 	private void plantTrees() {
 		placeExterior(6, 15, SurfaceExterior.Type.OAK);
 		placeExterior(23, 8, SurfaceExterior.Type.PINE);
@@ -218,50 +202,6 @@ public class SurfaceLevel extends Level {
 		placeExterior(HayQuest.FIRST_STACK_X, HayQuest.FIRST_STACK_Y, SurfaceExterior.Type.HAYSTACK);
 		placeExterior(HayQuest.SECOND_STACK_X, HayQuest.SECOND_STACK_Y, SurfaceExterior.Type.HAYSTACK);
 		placeExterior(HayQuest.THIRD_STACK_X, HayQuest.THIRD_STACK_Y, SurfaceExterior.Type.HAYSTACK);
-	}
-
-	private void placeExterior(int x, int y, SurfaceExterior.Type type) {
-		// Only the base occupies the ground; the crown or roof extends north.
-		SurfaceExterior base = new SurfaceExterior(type, x, y, false);
-		Painter.fill(this, x, y, base.tileW, base.tileH, Terrain.SURFACE_DECO);
-		customTiles.add(base);
-		if (type.height > 1) {
-			customWalls.add(new SurfaceExterior(type, x, y, true));
-		}
-	}
-
-	@Override
-	public void buildFlagMaps() {
-		super.buildFlagMaps();
-		for (int cell = 0; cell < length(); cell++) {
-			if (map[cell] == Terrain.SURFACE_DECO) {
-				losBlocking[cell] = exteriorBlocksSight(cell);
-			}
-		}
-	}
-
-	@Override
-	public void updateCellFlags(int cell) {
-		super.updateCellFlags(cell);
-		if (map[cell] == Terrain.SURFACE_DECO) {
-			losBlocking[cell] = exteriorBlocksSight(cell);
-		}
-	}
-
-	private boolean exteriorBlocksSight(int cell) {
-		int x = cell % width();
-		int y = cell / width();
-		for (CustomTilemap tile : customTiles) {
-			if (x >= tile.tileX && x < tile.tileX + tile.tileW
-					&& y >= tile.tileY && y < tile.tileY + tile.tileH) {
-				if (tile instanceof SurfaceHandcart || tile instanceof SurfaceBerryBush) return false;
-				if (tile instanceof SurfaceExterior) return ((SurfaceExterior) tile).blocksSight();
-				if (tile instanceof SurfaceForest && ((SurfaceForest) tile).containsCell(x, y)) {
-					return ((SurfaceForest) tile).blocksSight(x, y);
-				}
-			}
-		}
-		return true;
 	}
 
 	public boolean isWellCell(int cell) {
@@ -431,16 +371,6 @@ public class SurfaceLevel extends Level {
 			miron.pos = 24 * width() + 22;
 			mobs.add(miron);
 		}
-	}
-
-	@Override
-	public Mob createMob() {
-		return null;
-	}
-
-	@Override
-	public Actor addRespawner() {
-		return null;
 	}
 
 	@Override

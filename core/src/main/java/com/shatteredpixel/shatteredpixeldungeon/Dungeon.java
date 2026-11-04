@@ -71,6 +71,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.StartLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.WoodlandLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.VaultLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
@@ -304,6 +305,9 @@ public class Dungeon {
 		Level level;
 		if (branch == 0) {
 			switch (depth) {
+				case -1:
+					level = new WoodlandLevel();
+					break;
 				case 0:
 					level = new SurfaceLevel();
 					break;

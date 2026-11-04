@@ -23,7 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.tiles;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
-import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.OutdoorLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.watabou.noosa.Image;
 import com.watabou.utils.PathFinder;
@@ -42,11 +42,15 @@ public class DungeonTerrainTilemap extends DungeonTilemap {
 
 	@Override
 	protected int getTileVisual(int pos, int tile, boolean flat) {
+		return SurfaceCliffTiles.visual(pos, terrainVisual(pos, tile, flat), false);
+	}
+
+	private int terrainVisual(int pos, int tile, boolean flat) {
 		int visual = DungeonTileSheet.directVisuals.get(tile, -1);
 		if (visual != -1) {
-			if (Dungeon.level instanceof SurfaceLevel
-					&& (tile == Terrain.EMPTY || tile == Terrain.SURFACE_DECO)) {
-				return SurfaceFloorTiles.getVisual(pos, mapWidth, Dungeon.level.height());
+			if (Dungeon.level instanceof OutdoorLevel
+					&& (tile == Terrain.EMPTY || tile == Terrain.SURFACE_DECO || tile == Terrain.CUSTOM_DECO)) {
+				return ((OutdoorLevel) Dungeon.level).floorVisual(pos);
 			}
 			if (visual == DungeonTileSheet.FLOOR_DECO && Dungeon.level instanceof MiningLevel) {
 				for (int i : PathFinder.NEIGHBOURS4) {

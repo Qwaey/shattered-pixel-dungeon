@@ -79,7 +79,7 @@ public class SurfaceFloorTiles {
 			"  l  l"
 	};
 
-	// Positions are relative to the surface's centre and follow the fixed village plan.
+	// Positions follow the original village origin (28, 19), before the forest extension.
 	// Spaces leave the meadow underneath; dots deliberately keep plain grass.
 	private static final Patch[] PATCHES = {
 			// A short branch reaches the cart at the forest entrance.
@@ -108,13 +108,14 @@ public class SurfaceFloorTiles {
 			new Patch(5, 9, " f  f ", "   f  ", "f     ")
 	};
 
-	public static int getVisual(int pos, int width, int height) {
+	public static int getVisual(int pos, int width) {
 		int x = pos % width;
 		int y = pos / width;
 		String row = MEADOW[y % MEADOW.length];
 		char detail = row.charAt(x % row.length());
 		int villageX = x - width / 2;
-		int villageY = y - height / 2;
+		// The authored village stays in place when the southern forest grows.
+		int villageY = y - 19;
 		int field = fieldVisual(villageX, villageY);
 		if (field != -1) return field;
 		int path = SurfacePathTiles.getVisual(x, y);

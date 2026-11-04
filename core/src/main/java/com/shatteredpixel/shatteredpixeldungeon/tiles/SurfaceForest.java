@@ -29,7 +29,7 @@ import com.watabou.utils.Bundle;
 
 import java.util.Arrays;
 
-// A closed, authored forest around the village clearing, drawn in two batches.
+// Authored forests drawn in two batches, using the same tree and sapling atlas.
 public class SurfaceForest extends CustomTilemap {
 
 	// Each symbol covers a 2x2 patch; odd rows shift one cell east.
@@ -55,7 +55,10 @@ public class SurfaceForest extends CustomTilemap {
 			"6271839.............6271839",
 			"83945061a........d728394506",
 			"172839450a......d5061728394",
-			"394506271839450617283945061"
+			"3945062718394.0617283945061",
+			// A visible trail continues south between two deeper rows of trees.
+			"0516273849506..183945061728",
+			"6271839450617.8394506271839"
 	};
 
 	public static final int WIDTH = PLAN[0].length() * 2 + 2;
@@ -76,15 +79,15 @@ public class SurfaceForest extends CustomTilemap {
 	public SurfaceForest() {
 	}
 
-	private SurfaceForest(boolean canopy) {
+	private SurfaceForest(boolean canopy, String[] plan) {
 		this.canopy = canopy;
-		tileW = WIDTH;
-		tileH = HEIGHT;
-		trees = new int[PLAN.length * PLAN[0].length()];
-		for (int row = 0; row < PLAN.length; row++) {
-			for (int col = 0; col < PLAN[row].length(); col++) {
-				char tree = PLAN[row].charAt(col);
-				trees[row * PLAN[0].length() + col] = tree == '.' ? -1
+		tileW = plan[0].length() * 2 + 2;
+		tileH = plan.length * 2 + 2;
+		trees = new int[plan.length * plan[0].length()];
+		for (int row = 0; row < plan.length; row++) {
+			for (int col = 0; col < plan[row].length(); col++) {
+				char tree = plan[row].charAt(col);
+				trees[row * plan[0].length() + col] = tree == '.' ? -1
 						: tree >= 'a' ? SAPLING + tree - 'a'
 						: tree >= 'A' ? SINGLE_TREE + tree - 'A' : tree - '0';
 			}
@@ -92,8 +95,12 @@ public class SurfaceForest extends CustomTilemap {
 	}
 
 	public static void plant(Level level) {
-		SurfaceForest ground = new SurfaceForest(false);
-		int columns = PLAN[0].length();
+		plant(level, PLAN);
+	}
+
+	public static void plant(Level level, String[] plan) {
+		SurfaceForest ground = new SurfaceForest(false, plan);
+		int columns = plan[0].length();
 		for (int i = 0; i < ground.trees.length; i++) {
 			int tree = ground.trees[i];
 			if (tree < 0) continue;
@@ -108,7 +115,7 @@ public class SurfaceForest extends CustomTilemap {
 			}
 		}
 		level.customTiles.add(ground);
-		level.customWalls.add(new SurfaceForest(true));
+		level.customWalls.add(new SurfaceForest(true, plan));
 	}
 
 	private static int spriteColumn(int tree) {

@@ -1,6 +1,7 @@
 # Static artwork/layout preview only. This does not launch the game.
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
+. (Join-Path $PSScriptRoot 'ground-preview-utils.ps1')
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $javaRoot = Join-Path $repoRoot 'core/src/main/java/com/shatteredpixel/shatteredpixeldungeon'
 $assetRoot = Join-Path $repoRoot 'core/src/main/assets/environment'
@@ -23,6 +24,10 @@ $height = $forestPlan.Count * 2 + 2
 $map = [int[,]]::new($width, $height)
 $routesBody = [regex]::Match($pathCode, '(?s)ROUTES\s*=\s*\{(.*?)\};').Groups[1].Value
 $routes = @([regex]::Matches($routesBody, '\{([^}]+)\}') | ForEach-Object { ,@([regex]::Matches($_.Groups[1].Value, '-?\d+') | ForEach-Object { [int]$_.Value }) })
+$faintBody = [regex]::Match($pathCode, '(?s)FAINT_ROUTES\s*=\s*\{(.*?)\};').Groups[1].Value
+$faintRoutes = @([regex]::Matches($faintBody, '\{([^}]+)\}') | ForEach-Object { ,@([regex]::Matches($_.Groups[1].Value, '\d+') | ForEach-Object { [int]$_.Value }) })
+$trailWear = String-Rows $pathCode 'TRAIL_WEAR'
+$faintSamples = Route-Samples $width $height $faintRoutes $trailWear
 $barnShape = String-Rows $pathCode 'BARN_PATH_SHAPE'
 $barnPathX = [int][regex]::Match($pathCode, 'BARN_PATH_X\s*=\s*(-?\d+)').Groups[1].Value
 $barnPathY = [int][regex]::Match($pathCode, 'BARN_PATH_Y\s*=\s*(-?\d+)').Groups[1].Value
@@ -54,7 +59,7 @@ foreach ($match in [regex]::Matches($floorCode, '(?s)new Patch\((-?\d+),\s*(-?\d
 }
 function Ground-Tile([int] $x, [int] $y) {
     $fieldX = $x - [int]($width / 2) + 11
-    $fieldY = $y - [int]($height / 2) - 4
+    $fieldY = $y - 19 - 4
     if ($fieldX -ge 0 -and $fieldY -ge 0 -and $fieldX -lt $fieldShape[0].Length - 1 -and $fieldY -lt $fieldShape.Count - 1) {
         $mask = [int]($fieldShape[$fieldY][$fieldX] -eq '#') + 2 * [int]($fieldShape[$fieldY][$fieldX + 1] -eq '#') + 4 * [int]($fieldShape[$fieldY + 1][$fieldX + 1] -eq '#') + 8 * [int]($fieldShape[$fieldY + 1][$fieldX] -eq '#')
         if ($mask -eq 15) { return 21 }
@@ -62,10 +67,12 @@ function Ground-Tile([int] $x, [int] $y) {
     }
     $mask = [int]$samples[$x, $y] + 2 * [int]$samples[($x + 1), $y] + 4 * [int]$samples[($x + 1), ($y + 1)] + 8 * [int]$samples[$x, ($y + 1)]
     if ($mask -ne 0) { return 272 + 16 * $variants[$y % 3][$x % 4] + $mask }
+    $mask = [int]$faintSamples[$x, $y] + 2 * [int]$faintSamples[($x + 1), $y] + 4 * [int]$faintSamples[($x + 1), ($y + 1)] + 8 * [int]$faintSamples[$x, ($y + 1)]
+    if ($mask -ne 0) { return 272 + 16 * $variants[$y % 3][$x % 4] + $mask }
     $detail = $meadow[$y % $meadow.Count][$x % $meadow[0].Length]
     foreach ($patch in $patches) {
         $patchX = $x - [int]($width / 2) - $patch.X
-        $patchY = $y - [int]($height / 2) - $patch.Y
+        $patchY = $y - 19 - $patch.Y
         if ($patchY -ge 0 -and $patchY -lt $patch.Rows.Count -and $patchX -ge 0 -and $patchX -lt $patch.Rows[$patchY].Length -and $patch.Rows[$patchY][$patchX] -ne ' ') { $detail = $patch.Rows[$patchY][$patchX] }
     }
     switch ($detail) { 'd' { return 6 }; 'p' { return 12 }; 'l' { return 13 }; 'f' { return 14 }; 's' { return 15 }; default { return 0 } }
@@ -81,13 +88,15 @@ foreach ($house in $houses) {
     $map[$house[4], $house[5]] = if ($house[0] -eq 29) { 58 } else { 56 }
 }
 $map[11, 10] = 17
-$terrain = [System.Drawing.Bitmap]::new((Join-Path $assetRoot 'tiles_surface.png'))
+$terrain = [System.Drawing.Bitmap]::new((Join-Path $assetRoot 'tiles_surface_cliffs.png'))
 $exterior = [System.Drawing.Bitmap]::new((Join-Path $assetRoot 'custom_tiles/surface_exterior.png'))
 $canvas = [System.Drawing.Bitmap]::new($width * 16, $height * 16)
 $graphics = [System.Drawing.Graphics]::FromImage($canvas)
 for ($y = 0; $y -lt $height; $y++) {
     for ($x = 0; $x -lt $width; $x++) {
         $tile = if ($map[$x, $y] -ne 0) { $map[$x, $y] } else { Ground-Tile $x $y }
+        if ($x -eq 0 -or $y -eq 0 -or $x -eq $width - 1 -or $y -eq $height - 1) { $tile = 320 + 48 }
+        if ($y -eq $height - 1 -and $x -ge 28 -and $x -le 29) { $tile = 320 + 144 }
         $sourceRect = [System.Drawing.Rectangle]::new(($tile % 16) * 16, [int][Math]::Floor($tile / 16) * 16, 16, 16)
         $graphics.DrawImage($terrain, [System.Drawing.Rectangle]::new($x * 16, $y * 16, 16, 16), $sourceRect, [System.Drawing.GraphicsUnit]::Pixel)
     }
@@ -122,7 +131,7 @@ foreach ($object in ($objects | Sort-Object Y, X)) {
 }
 $graphics.Dispose()
 $canvas.Save((Join-Path $PSScriptRoot 'surface-paths-layout.png'), [System.Drawing.Imaging.ImageFormat]::Png)
-$crop = $canvas.Clone([System.Drawing.Rectangle]::new(8 * 16, 6 * 16, 33 * 16, 26 * 16), [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+$crop = $canvas.Clone([System.Drawing.Rectangle]::new(8 * 16, 6 * 16, 33 * 16, ($height - 6) * 16), [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 $preview = [System.Drawing.Bitmap]::new($crop.Width * 2, $crop.Height * 2)
 $graphics = [System.Drawing.Graphics]::FromImage($preview)
 $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::NearestNeighbor

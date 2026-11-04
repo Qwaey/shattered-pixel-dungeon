@@ -548,6 +548,10 @@ public abstract class Level implements Bundlable {
 
 	abstract protected void createItems();
 
+	public int transitionArrivalCell(LevelTransition transition) {
+		return transition.cell();
+	}
+
 	public int entrance(){
 		LevelTransition l = getTransition(null);
 		if (l != null){
@@ -599,7 +603,9 @@ public abstract class Level implements Bundlable {
 
 		beforeTransition();
 		InterlevelScene.curTransition = transition;
-		if (transition.type == LevelTransition.Type.REGULAR_EXIT
+		if (transition.type == LevelTransition.Type.SECTION) {
+			InterlevelScene.mode = InterlevelScene.Mode.TRAVEL;
+		} else if (transition.type == LevelTransition.Type.REGULAR_EXIT
 				|| transition.type == LevelTransition.Type.BRANCH_EXIT) {
 			InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 		} else {

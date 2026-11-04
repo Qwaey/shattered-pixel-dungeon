@@ -38,6 +38,10 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 
 	@Override
 	protected int getTileVisual(int pos, int tile, boolean flat){
+		return SurfaceCliffTiles.visual(pos, wallVisual(pos, tile, flat), true);
+	}
+
+	private int wallVisual(int pos, int tile, boolean flat) {
 
 		if (flat) return -1;
 
