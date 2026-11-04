@@ -8,6 +8,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.effects.PassageFade;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
@@ -18,6 +19,7 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFloorTiles;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceForest;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceHandcart;
+import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Music;
 
 // Shared rendering and obstacles for authored locations on the surface.
@@ -43,6 +45,18 @@ public abstract class OutdoorLevel extends Level {
 		return SurfaceFloorTiles.getVisual(cell, width());
 	}
 
+	@Override
+	public Group addWallVisuals() {
+		super.addWallVisuals();
+		// Above trunks, crowns and wall overhangs, below the fog of war.
+		for (LevelTransition transition : transitions) {
+			if (transition.type == LevelTransition.Type.SECTION) {
+				wallVisuals.add(new PassageFade(this, transition));
+			}
+		}
+		return wallVisuals;
+	}
+
 	protected abstract boolean isHouseCell(int x, int y);
 
 	protected abstract int sectionArrivalCell();
@@ -66,10 +80,11 @@ public abstract class OutdoorLevel extends Level {
 		int x = cell % width(), y = cell / width();
 		for (LevelTransition transition : transitions) {
 			if (transition.type != LevelTransition.Type.SECTION) continue;
-			if (x >= transition.left && x <= transition.right
+			int margin = PassageFade.WALL_MARGIN;
+			if (x >= transition.left - margin && x <= transition.right + margin
 					&& ((y == 0 && transition.top <= 2)
 					|| (y == height() - 1 && transition.bottom >= height() - 3))) return true;
-			if (y >= transition.top && y <= transition.bottom
+			if (y >= transition.top - margin && y <= transition.bottom + margin
 					&& ((x == 0 && transition.left <= 2)
 					|| (x == width() - 1 && transition.right >= width() - 3))) return true;
 		}

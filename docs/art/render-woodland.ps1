@@ -8,6 +8,8 @@ $assetRoot = Join-Path $repoRoot 'core/src/main/assets/environment'
 $levelCode = Get-Content -Raw (Join-Path $javaRoot 'levels/WoodlandLevel.java')
 $floorCode = Get-Content -Raw (Join-Path $javaRoot 'tiles/WoodlandFloorTiles.java')
 $pathCode = Get-Content -Raw (Join-Path $javaRoot 'tiles/SurfacePathTiles.java')
+$fadeCode = Get-Content -Raw (Join-Path $javaRoot 'effects/PassageFade.java')
+$wallMargin = [int][regex]::Match($fadeCode, 'WALL_MARGIN\s*=\s*(\d+)').Groups[1].Value
 
 function String-Rows([string] $code, [string] $name) {
     $body = [regex]::Match($code, "(?s)\b$name\s*=\s*\{(.*?)\};").Groups[1].Value
@@ -48,7 +50,7 @@ for ($y = 0; $y -lt $height; $y++) {
     for ($x = 0; $x -lt $width; $x++) {
         $tile = Ground-Tile $x $y
         if ($x -eq 0 -or $y -eq 0 -or $x -eq $width - 1 -or $y -eq $height - 1) { $tile = 320 + 48 }
-        if ($y -eq 0 -and $x -ge 10 -and $x -le 11) { $tile = 320 + 144 }
+        if ($y -eq 0 -and $x -ge 10 - $wallMargin -and $x -le 11 + $wallMargin) { $tile = 320 + 144 }
         if ($x -ge $houseX -and $x -le $houseX + 7 -and $y -ge $houseY -and $y -le $houseY + 6) {
             $tile = if ($x -eq $houseX -or $x -eq $houseX + 7 -or $y -eq $houseY -or $y -eq $houseY + 6) { 48 } else { 4 }
             if ($x -eq $houseX + 3 -and $y -eq $houseY + 6) { $tile = 56 }
@@ -91,6 +93,7 @@ foreach ($match in [regex]::Matches($levelCode, 'placeWoodpile\((\d+),\s*(\d+)\)
 $axeMatch = [regex]::Match($levelCode, 'new SurfaceChoppingBlock\((\d+),\s*(\d+)\)')
 Draw-Sprite $axe 0 0 1 1 ([int]$axeMatch.Groups[1].Value) ([int]$axeMatch.Groups[2].Value)
 $graphics.Dispose()
+Add-Passage-Fade $canvas $true 10 11 $fadeCode
 $canvas.Save((Join-Path $PSScriptRoot 'woodland-layout.png'), [System.Drawing.Imaging.ImageFormat]::Png)
 $preview = [System.Drawing.Bitmap]::new($canvas.Width * 2, $canvas.Height * 2)
 $graphics = [System.Drawing.Graphics]::FromImage($preview)

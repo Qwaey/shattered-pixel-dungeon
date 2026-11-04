@@ -9,6 +9,8 @@ $floorCode = Get-Content -Raw (Join-Path $javaRoot 'tiles/SurfaceFloorTiles.java
 $pathCode = Get-Content -Raw (Join-Path $javaRoot 'tiles/SurfacePathTiles.java')
 $forestCode = Get-Content -Raw (Join-Path $javaRoot 'tiles/SurfaceForest.java')
 $levelCode = Get-Content -Raw (Join-Path $javaRoot 'levels/SurfaceLevel.java')
+$fadeCode = Get-Content -Raw (Join-Path $javaRoot 'effects/PassageFade.java')
+$wallMargin = [int][regex]::Match($fadeCode, 'WALL_MARGIN\s*=\s*(\d+)').Groups[1].Value
 
 function String-Rows([string] $code, [string] $name) {
     $body = [regex]::Match($code, "(?s)\b$name\s*=\s*\{(.*?)\};").Groups[1].Value
@@ -96,7 +98,7 @@ for ($y = 0; $y -lt $height; $y++) {
     for ($x = 0; $x -lt $width; $x++) {
         $tile = if ($map[$x, $y] -ne 0) { $map[$x, $y] } else { Ground-Tile $x $y }
         if ($x -eq 0 -or $y -eq 0 -or $x -eq $width - 1 -or $y -eq $height - 1) { $tile = 320 + 48 }
-        if ($y -eq $height - 1 -and $x -ge 28 -and $x -le 29) { $tile = 320 + 144 }
+        if ($y -eq $height - 1 -and $x -ge 28 - $wallMargin -and $x -le 29 + $wallMargin) { $tile = 320 + 144 }
         $sourceRect = [System.Drawing.Rectangle]::new(($tile % 16) * 16, [int][Math]::Floor($tile / 16) * 16, 16, 16)
         $graphics.DrawImage($terrain, [System.Drawing.Rectangle]::new($x * 16, $y * 16, 16, 16), $sourceRect, [System.Drawing.GraphicsUnit]::Pixel)
     }
@@ -130,6 +132,7 @@ foreach ($object in ($objects | Sort-Object Y, X)) {
     $graphics.DrawImage($exterior, $destination, $sourceRect, [System.Drawing.GraphicsUnit]::Pixel)
 }
 $graphics.Dispose()
+Add-Passage-Fade $canvas $false 28 29 $fadeCode
 $canvas.Save((Join-Path $PSScriptRoot 'surface-paths-layout.png'), [System.Drawing.Imaging.ImageFormat]::Png)
 $crop = $canvas.Clone([System.Drawing.Rectangle]::new(8 * 16, 6 * 16, 33 * 16, ($height - 6) * 16), [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 $preview = [System.Drawing.Bitmap]::new($crop.Width * 2, $crop.Height * 2)
