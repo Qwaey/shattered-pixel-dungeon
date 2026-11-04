@@ -866,6 +866,13 @@ public class Hero extends Char {
 			spendAndNext( TICK );
 			return false;
 		}
+
+		// Section passages trigger on entry, even when the path continues beyond them.
+		LevelTransition transition = Dungeon.level.getTransition(pos);
+		if (transition != null && transition.type == LevelTransition.Type.SECTION
+				&& !Dungeon.level.locked && !rooted) {
+			curAction = new HeroAction.LvlTransition(pos);
+		}
 		
 		boolean actResult;
 		if (curAction == null) {
@@ -2131,7 +2138,7 @@ public class Hero extends Char {
 			curAction = new HeroAction.Unlock( cell );
 			
 		} else if (Dungeon.level.getTransition(cell) != null
-				//moving to a transition doesn't automatically trigger it when enemies are near
+				// Stairs don't automatically trigger near enemies; section passages are handled in act().
 				&& (visibleEnemies.size() == 0 || cell == pos)
 				&& !Dungeon.level.locked
 				&& !Dungeon.level.plants.containsKey(cell)
