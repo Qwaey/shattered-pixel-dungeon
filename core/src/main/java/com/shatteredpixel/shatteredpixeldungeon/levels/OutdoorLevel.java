@@ -41,7 +41,14 @@ public abstract class OutdoorLevel extends Level {
 	}
 
 	public int floorVisual(int cell) {
-		if (map[cell] == Terrain.CUSTOM_DECO) return DungeonTileSheet.FLOOR;
+		// A decoration can replace the terrain's flags without replacing its floor.
+		if (isHouseCell(cell % width(), cell / width())) {
+			return DungeonTileSheet.getVisualWithAlts(DungeonTileSheet.FLOOR_SP, cell);
+		}
+		return outdoorFloorVisual(cell);
+	}
+
+	protected int outdoorFloorVisual(int cell) {
 		return SurfaceFloorTiles.getVisual(cell, width());
 	}
 

@@ -16,9 +16,11 @@ function String-Rows([string] $code, [string] $name) {
     return @([regex]::Matches($body, '"([^"\r\n]*)"') | ForEach-Object { $_.Groups[1].Value })
 }
 $forest = String-Rows $levelCode 'FOREST'
+$ground = String-Rows $levelCode 'GROUND'
 $meadow = String-Rows $floorCode 'MEADOW'
-$width = $forest[0].Length * 2 + 2
-$height = $forest.Count * 2 + 2
+$meadowY = [int][regex]::Match($floorCode, 'MEADOW_Y\s*=\s*(\d+)').Groups[1].Value
+$width = $ground[0].Length
+$height = $ground.Count
 $routeBody = [regex]::Match($floorCode, '(?s)ROUTES\s*=\s*\{(.*?)\};').Groups[1].Value
 $routes = @([regex]::Matches($routeBody, '\{([^}]+)\}') | ForEach-Object { ,@([regex]::Matches($_.Groups[1].Value, '\d+') | ForEach-Object { [int]$_.Value }) })
 $trailWear = String-Rows $pathCode 'TRAIL_WEAR'
@@ -27,10 +29,9 @@ $variants = @(@(0, 1, 0, 2), @(2, 0, 1, 0), @(1, 2, 0, 1))
 function Ground-Tile([int] $x, [int] $y) {
     $mask = [int]$samples[$x, $y] + 2 * [int]$samples[($x + 1), $y] + 4 * [int]$samples[($x + 1), ($y + 1)] + 8 * [int]$samples[$x, ($y + 1)]
     if ($mask -ne 0) { return 272 + 16 * $variants[$y % 3][$x % 4] + $mask }
-    $y -= 4
-    if ($y -ge 18 -and $meadow[($y - 18) % $meadow.Count][$x % $meadow[0].Length] -eq 'f') { return 14 }
-    if ($y -lt 14 -and ($x + 2 * $y) % 7 -eq 0) { return 13 }
-    if ($y -ge 12 -and (2 * $x + $y) % 19 -eq 0) { return 14 }
+    $meadowRow = $y - $meadowY
+    if ($meadowRow -ge 0 -and $meadowRow -lt $meadow.Count -and $meadow[$meadowRow][$x] -eq 'f') { return 14 }
+    if ($y -le 11 -and ($x + 2 * $y) % 7 -eq 0) { return 13 }
     if (($x + 3 * $y) % 23 -eq 0) { return 12 }
     return 0
 }
@@ -44,12 +45,14 @@ $graphics = [System.Drawing.Graphics]::FromImage($canvas)
 function Draw-Sprite($bitmap, [int] $sourceX, [int] $sourceY, [int] $w, [int] $h, [int] $x, [int] $y) {
     $graphics.DrawImage($bitmap, [System.Drawing.Rectangle]::new($x * 16, $y * 16, $w * 16, $h * 16), [System.Drawing.Rectangle]::new($sourceX, $sourceY, $w * 16, $h * 16), [System.Drawing.GraphicsUnit]::Pixel)
 }
-$houseX = [int][regex]::Match($levelCode, 'HOUSE_X\s*=\s*(\d+)').Groups[1].Value
+$houseWidth = [int][regex]::Match($levelCode, 'HOUSE_WIDTH\s*=\s*(\d+)').Groups[1].Value
+$houseMargin = [int][regex]::Match($levelCode, 'return width\(\) - HOUSE_WIDTH - (\d+)').Groups[1].Value
+$houseX = $width - $houseWidth - $houseMargin
 $houseY = [int][regex]::Match($levelCode, 'HOUSE_Y\s*=\s*(\d+)').Groups[1].Value
 for ($y = 0; $y -lt $height; $y++) {
     for ($x = 0; $x -lt $width; $x++) {
         $tile = Ground-Tile $x $y
-        if ($x -eq 0 -or $y -eq 0 -or $x -eq $width - 1 -or $y -eq $height - 1) { $tile = 320 + 48 }
+        if ($ground[$y][$x] -eq '#') { $tile = 320 + 48 }
         if ($y -eq 0 -and $x -ge 10 - $wallMargin -and $x -le 11 + $wallMargin) { $tile = 320 + 144 }
         if ($x -ge $houseX -and $x -le $houseX + 7 -and $y -ge $houseY -and $y -le $houseY + 6) {
             $tile = if ($x -eq $houseX -or $x -eq $houseX + 7 -or $y -eq $houseY -or $y -eq $houseY + 6) { 48 } else { 4 }
@@ -82,12 +85,12 @@ foreach ($object in ($objects | Sort-Object Y, X)) {
     Draw-Sprite $exterior ($object.Column * 16) ((3 - $object.H) * 16) $object.W $object.H $object.X ($object.Y - $object.H + 1)
 }
 $furnitureColumns = @{ BED = 0; TABLE = 1; STOOL = 2; CUPBOARD = 3; STOVE = 4; FIREWOOD = 5; WASHBASIN = 6 }
-foreach ($match in [regex]::Matches($levelCode, 'placeFurniture\(HOUSE_X \+ (\d+), HOUSE_Y \+ (\d+), Type.(\w+)\)')) {
+foreach ($match in [regex]::Matches($levelCode, 'placeFurniture\(houseX \+ (\d+), HOUSE_Y \+ (\d+), Type\.(\w+)\)')) {
     $type = $match.Groups[3].Value
     $h = if ($type -eq 'BED') { 2 } else { 1 }
     Draw-Sprite $furniture ($furnitureColumns[$type] * 16) $(if ($h -eq 2) { 0 } else { 16 }) 1 $h ($houseX + [int]$match.Groups[1].Value) ($houseY + [int]$match.Groups[2].Value)
 }
-foreach ($match in [regex]::Matches($levelCode, 'placeWoodpile\((\d+),\s*(\d+)\)')) {
+foreach ($match in [regex]::Matches($levelCode, 'placeFurniture\((\d+),\s*(\d+),\s*Type\.FIREWOOD\)')) {
     Draw-Sprite $furniture (5 * 16) 16 1 1 ([int]$match.Groups[1].Value) ([int]$match.Groups[2].Value)
 }
 $axeMatch = [regex]::Match($levelCode, 'new SurfaceChoppingBlock\((\d+),\s*(\d+)\)')

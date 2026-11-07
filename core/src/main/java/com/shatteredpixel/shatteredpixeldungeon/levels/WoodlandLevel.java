@@ -7,21 +7,23 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTileSheet;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceChoppingBlock;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceForest;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture.Type;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.WoodlandFloorTiles;
 
 public class WoodlandLevel extends OutdoorLevel {
 
-	private static final int HOUSE_X = 16, HOUSE_Y = 12;
+	private static final int HOUSE_Y = 12, HOUSE_WIDTH = 8, HOUSE_HEIGHT = 7;
+
+	private int houseX() {
+		return width() - HOUSE_WIDTH - 4;
+	}
 
 	@Override
 	protected boolean isHouseCell(int x, int y) {
-		return insideHouse(x, y, HOUSE_X, HOUSE_Y, 8, 7);
+		return insideHouse(x, y, houseX(), HOUSE_Y, HOUSE_WIDTH, HOUSE_HEIGHT);
 	}
 
 	@Override
@@ -29,62 +31,81 @@ public class WoodlandLevel extends OutdoorLevel {
 		return 4 * width() + 10;
 	}
 
-	// Authored 28x40 location: four added northern rows frame the forest passage.
-	// The northern section passage receives the hero coming south from the village.
+	// Meadow outline: the cliffs encroach from both sides and close off the south.
+	private static final String[] GROUND = {
+			"########################",
+			"#......................#",
+			"#......................#",
+			"#......................#",
+			"#......................#",
+			"#......................#",
+			"#......................#",
+			"#......................#",
+			"#......................#",
+			"#......................#",
+			"#......................#",
+			"#.....................##",
+			"##....................##",
+			"##....................##",
+			"###...................##",
+			"###...................##",
+			"##....................##",
+			"##....................##",
+			"#.....................##",
+			"#......................#",
+			"#......................#",
+			"##.....................#",
+			"##.....................#",
+			"###....................#",
+			"###...................##",
+			"####.................###",
+			"######............######",
+			"########################"
+	};
+
+	// The north trail runs from closed thickets to scattered trees and saplings.
 	private static final String[] FOREST = {
-			"1728..5061728",
-			"3945..a617283",
-			"0516..3849506",
-			"6271..c945061",
-			"172a.......83",
-			"39A........a6",
-			"05b.........7",
-			"62a.........8",
-			"83..........5",
-			"17b.........6",
-			"39a........d1",
-			"05..........7",
-			"62b........c8",
-			"83.........d5",
-			"17a.........6",
-			"39..........1",
-			"05b........c7",
-			"627a......d83",
-			"1728394506172"
+			"1728..50617",
+			"3945..a617.",
+			"05b....c506",
+			"62a.....d8.",
+			".A..a...Hc.",
+			"..b........"
 	};
 
 	@Override
 	protected boolean build() {
-		setSize(28, 40);
-		Painter.fill(this, 1, 1, width() - 2, height() - 2, Terrain.EMPTY);
+		setSize(GROUND[0].length(), GROUND.length);
+		for (int y = 0; y < height(); y++) {
+			for (int x = 0; x < width(); x++) {
+				Painter.set(this, x, y, GROUND[y].charAt(x) == '#' ? Terrain.WALL : Terrain.EMPTY);
+			}
+		}
 		SurfaceForest.plant(this, FOREST);
 
 		// Open-roof house, using the village's wooden walls, floor and furniture.
-		paintHouse(HOUSE_X, HOUSE_Y, 8, 7, HOUSE_X + 3, HOUSE_Y + 6);
-		placeFurniture(HOUSE_X + 1, HOUSE_Y + 1, Type.BED);
-		placeFurniture(HOUSE_X + 5, HOUSE_Y + 1, Type.STOVE);
-		placeFurniture(HOUSE_X + 6, HOUSE_Y + 2, Type.FIREWOOD);
-		placeFurniture(HOUSE_X + 1, HOUSE_Y + 5, Type.CUPBOARD);
-		placeFurniture(HOUSE_X + 5, HOUSE_Y + 4, Type.TABLE);
-		placeFurniture(HOUSE_X + 5, HOUSE_Y + 5, Type.STOOL);
-		placeFurniture(HOUSE_X + 3, HOUSE_Y + 1, Type.WASHBASIN);
+		int houseX = houseX();
+		paintHouse(houseX, HOUSE_Y, HOUSE_WIDTH, HOUSE_HEIGHT, houseX + 3, HOUSE_Y + 6);
+		placeFurniture(houseX + 1, HOUSE_Y + 1, Type.BED);
+		placeFurniture(houseX + 5, HOUSE_Y + 1, Type.STOVE);
+		placeFurniture(houseX + 6, HOUSE_Y + 2, Type.FIREWOOD);
+		placeFurniture(houseX + 1, HOUSE_Y + 5, Type.CUPBOARD);
+		placeFurniture(houseX + 5, HOUSE_Y + 4, Type.TABLE);
+		placeFurniture(houseX + 5, HOUSE_Y + 5, Type.STOOL);
+		placeFurniture(houseX + 3, HOUSE_Y + 1, Type.WASHBASIN);
 
 		// Existing woodcutting sprites; no new artwork or item rewards.
-		customTiles.add(new SurfaceChoppingBlock(18, 23));
-		Painter.set(this, 18, 23, Terrain.CUSTOM_DECO);
-		placeExterior(21, 21, SurfaceExterior.Type.CHOPPING_BLOCK);
-		placeExterior(23, 24, SurfaceExterior.Type.CHOPPING_BLOCK);
-		placeExterior(20, 26, SurfaceExterior.Type.CHOPPING_BLOCK);
-		placeWoodpile(22, 21);
-		placeWoodpile(23, 21);
-		placeWoodpile(22, 22);
-		placeWoodpile(23, 22);
-		placeWoodpile(24, 15);
-		placeWoodpile(24, 16);
-
-		placeExterior(5, 24, SurfaceExterior.Type.OAK);
-		placeExterior(7, 31, SurfaceExterior.Type.OAK);
-		placeExterior(21, 33, SurfaceExterior.Type.PINE);
+		customTiles.add(new SurfaceChoppingBlock(14, 22));
+		Painter.set(this, 14, 22, Terrain.CUSTOM_DECO);
+		placeExterior(17, 20, SurfaceExterior.Type.CHOPPING_BLOCK);
+		placeExterior(20, 23, SurfaceExterior.Type.CHOPPING_BLOCK);
+		placeExterior(15, 24, SurfaceExterior.Type.CHOPPING_BLOCK);
+		placeFurniture(18, 20, Type.FIREWOOD);
+		placeFurniture(19, 20, Type.FIREWOOD);
+		placeFurniture(18, 21, Type.FIREWOOD);
+		placeFurniture(19, 21, Type.FIREWOOD);
+		placeFurniture(20, 15, Type.FIREWOOD);
+		placeFurniture(20, 16, Type.FIREWOOD);
 
 		int passage = width() + 10;
 		LevelTransition transition = new LevelTransition(this, passage,
@@ -94,18 +115,9 @@ public class WoodlandLevel extends OutdoorLevel {
 		return true;
 	}
 
-	private void placeWoodpile(int x, int y) {
-		customTiles.add(new SurfaceFurniture(Type.FIREWOOD, x, y));
-		Painter.set(this, x, y, Terrain.SURFACE_DECO);
-	}
-
 	@Override
-	public int floorVisual(int cell) {
-		int x = cell % width(), y = cell / width();
-		if (x > HOUSE_X && x < HOUSE_X + 7 && y > HOUSE_Y && y < HOUSE_Y + 6) {
-			return DungeonTileSheet.FLOOR_SP;
-		}
-		return WoodlandFloorTiles.getVisual(x, y);
+	protected int outdoorFloorVisual(int cell) {
+		return WoodlandFloorTiles.getVisual(cell % width(), cell / width());
 	}
 
 	@Override
