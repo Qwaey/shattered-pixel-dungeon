@@ -521,6 +521,21 @@ public class WndJournal extends WndTabbed {
 				}
 			}
 
+			boolean surfaceHeader = false;
+			for (Notes.Record rec : Notes.getRecords(Notes.Record.class)) {
+				if (rec.depth() > 0 || rec instanceof Notes.CustomRecord || rec instanceof Notes.CampaignRecord) continue;
+				if (!surfaceHeader) {
+					grid.addHeader(Messages.get(this, "surface_header"));
+					surfaceHeader = true;
+				}
+				addRecord(rec);
+			}
+			ArrayList<Notes.CampaignRecord> completed = Notes.getRecords(Notes.CampaignRecord.class);
+			if (!completed.isEmpty()) {
+				grid.addHeader(Messages.get(this, "completed_quests"));
+				for (Notes.CampaignRecord rec : completed) addRecord(rec);
+			}
+
 			for (int i = Statistics.deepestFloor; i > 0; i--){
 
 				ArrayList<Notes.Record> recs = Notes.getRecords(i);
@@ -530,29 +545,7 @@ public class WndJournal extends WndTabbed {
 				} else {
 					grid.addHeader(Messages.get(this, "floor_header", i));
 				}
-				for( Notes.Record rec : recs){
-
-					ScrollingGridPane.GridItem gridItem = new ScrollingGridPane.GridItem(rec.icon()){
-						@Override
-						public boolean onClick(float x, float y) {
-							if (inside(x, y)) {
-								GameScene.show(new WndJournalItem(rec.icon(),
-										Messages.titleCase(rec.title()),
-										rec.desc()));
-								return true;
-							} else {
-								return false;
-							}
-						}
-					};
-
-					Visual secondIcon = rec.secondIcon();
-					if (secondIcon != null){
-						gridItem.addSecondIcon( secondIcon );
-					}
-
-					grid.addItem(gridItem);
-				}
+				for (Notes.Record rec : recs) addRecord(rec);
 			}
 
 			custom = new CustomNoteButton();
@@ -561,6 +554,20 @@ public class WndJournal extends WndTabbed {
 
 			grid.setRect(x, y, width, height);
 
+		}
+
+		private void addRecord(Notes.Record rec) {
+			ScrollingGridPane.GridItem gridItem = new ScrollingGridPane.GridItem(rec.icon()) {
+				@Override
+				public boolean onClick(float x, float y) {
+					if (!inside(x, y)) return false;
+					GameScene.show(new WndJournalItem(rec.icon(), Messages.titleCase(rec.title()), rec.desc()));
+					return true;
+				}
+			};
+			Visual secondIcon = rec.secondIcon();
+			if (secondIcon != null) gridItem.addSecondIcon(secondIcon);
+			grid.addItem(gridItem);
 		}
 		
 	}

@@ -54,6 +54,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CampaignLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CavesBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CavesLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityBossLevel;
@@ -64,15 +65,15 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.HallsLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.LastLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.OutdoorLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.StartLevel;
-import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
-import com.shatteredpixel.shatteredpixeldungeon.levels.WoodlandLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.VaultLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.CampaignQuest;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -258,6 +259,7 @@ public class Dungeon {
 		
 		Statistics.reset();
 		Notes.reset();
+		CampaignQuest.reset();
 
 		quickslot.reset();
 		QuickSlotButton.reset();
@@ -303,14 +305,10 @@ public class Dungeon {
 		Actor.clear();
 		
 		Level level;
-		if (branch == 0) {
+		if (branch == 0 && depth <= 0) {
+			level = CampaignLevel.atDepth(depth);
+		} else if (branch == 0) {
 			switch (depth) {
-				case -1:
-					level = new WoodlandLevel();
-					break;
-				case 0:
-					level = new SurfaceLevel();
-					break;
 				case 1:
 					level = new StartLevel();
 					break;
@@ -459,12 +457,13 @@ public class Dungeon {
 		if (Dungeon.hero != null && Dungeon.hero.buff(AscensionChallenge.class) != null){
 			return 26;
 		} else {
-			return depth;
+			return Math.max(1, depth);
 		}
 	}
 
 	public static boolean interfloorTeleportAllowed(){
 		if (Dungeon.level.locked
+				|| Dungeon.level instanceof OutdoorLevel
 				|| Dungeon.level instanceof MiningLevel || Dungeon.level instanceof VaultLevel
 				|| (Dungeon.hero != null && Dungeon.hero.belongings.getItem(Amulet.class) != null)){
 			return false;
@@ -674,6 +673,7 @@ public class Dungeon {
 			Wandmaker	.Quest.storeInBundle( quests );
 			Blacksmith	.Quest.storeInBundle( quests );
 			Imp			.Quest.storeInBundle( quests );
+			CampaignQuest.storeInBundle( quests );
 			bundle.put( QUESTS, quests );
 			
 			SpecialRoom.storeRoomsInBundle( bundle );
@@ -780,11 +780,13 @@ public class Dungeon {
 				Wandmaker.Quest.restoreFromBundle( quests );
 				Blacksmith.Quest.restoreFromBundle( quests );
 				Imp.Quest.restoreFromBundle( quests );
+				CampaignQuest.restoreFromBundle( quests );
 			} else {
 				Ghost.Quest.reset();
 				Wandmaker.Quest.reset();
 				Blacksmith.Quest.reset();
 				Imp.Quest.reset();
+				CampaignQuest.reset();
 			}
 			
 			SpecialRoom.restoreRoomsFromBundle(bundle);

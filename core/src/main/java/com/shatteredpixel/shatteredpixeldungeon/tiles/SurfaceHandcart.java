@@ -17,6 +17,7 @@ package com.shatteredpixel.shatteredpixeldungeon.tiles;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.CampaignQuest;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.Tilemap;
@@ -59,6 +60,7 @@ public class SurfaceHandcart extends CustomTilemap {
 	public void moveTo(int x, int y) {
 		moved = true;
 		Notes.remove(Notes.Landmark.HANDCART);
+		CampaignQuest.recordVillageQuest(3);
 		pos(x, y);
 		if (vis != null) {
 			vis.x = x * SIZE;

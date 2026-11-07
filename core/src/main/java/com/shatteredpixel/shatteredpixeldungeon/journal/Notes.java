@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfHealth;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.CampaignNPC;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.ImpShopkeeper;
@@ -43,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.Key;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.BeaconOfReturning;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.CampaignQuest;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.WeakFloorRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
@@ -147,6 +149,8 @@ public class Notes {
 		HANDCART,
 		HAY_FIELD,
 		HAY_REWARD,
+		ROAD,
+		PIE_DELIVERY,
 
 		DEMON_SPAWNER;
 	}
@@ -250,6 +254,8 @@ public class Notes {
 		@Override
 		public String desc() {
 			switch (landmark) {
+				case ROAD:           return CampaignQuest.journal();
+				case PIE_DELIVERY:   return CampaignQuest.deliveryNote();
 				default:            return "";
 
 				case CHASM_FLOOR:   return Messages.get(Level.Feeling.class, "chasm_desc");
@@ -582,6 +588,59 @@ public class Notes {
 
 	public static boolean add( Landmark landmark ) {
 		return add( landmark, Dungeon.depth );
+	}
+
+	public static void recordCampaignQuest(int quest) {
+		CampaignRecord record = new CampaignRecord();
+		record.depth = Dungeon.depth;
+		record.quest = quest;
+		if (!records.contains(record)) records.add(record);
+	}
+
+	public static class CampaignRecord extends Record {
+		private int quest;
+
+		@Override
+		public Image icon() {
+			return Icons.SCROLL_COLOR.get();
+		}
+
+		@Override
+		protected int order() {
+			return 3000 + quest;
+		}
+
+		@Override
+		public String title() {
+			return Messages.get(CampaignNPC.class, "q" + quest + "_name");
+		}
+
+		@Override
+		public String desc() {
+			return Messages.get(CampaignNPC.class, "q" + quest + "_done");
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			return other instanceof CampaignRecord && quest == ((CampaignRecord) other).quest;
+		}
+
+		@Override
+		public int hashCode() {
+			return quest;
+		}
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put("quest", quest);
+		}
+
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			quest = bundle.getInt("quest");
+		}
 	}
 	
 	public static boolean add( Landmark landmark, int depth ) {

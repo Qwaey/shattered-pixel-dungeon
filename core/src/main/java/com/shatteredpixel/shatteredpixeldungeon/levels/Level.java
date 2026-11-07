@@ -595,6 +595,14 @@ public abstract class Level implements Bundlable {
 		return null;
 	}
 
+	public LevelTransition getSectionTransitionFrom(int depth, int branch) {
+		for (LevelTransition transition : transitions) {
+			if (transition.type == LevelTransition.Type.SECTION
+					&& transition.destDepth == depth && transition.destBranch == branch) return transition;
+		}
+		return null;
+	}
+
 	//returns true if we immediately transition, false otherwise
 	public boolean activateTransition(Hero hero, LevelTransition transition){
 		if (locked){

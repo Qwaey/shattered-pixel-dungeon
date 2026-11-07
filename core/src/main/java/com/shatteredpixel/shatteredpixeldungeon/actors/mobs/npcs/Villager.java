@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SurfaceLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.CampaignQuest;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.LumberjackSprite;
@@ -58,17 +59,23 @@ public class Villager extends NPC {
 	}
 
 	private void showTopics() {
+		boolean hasRoadTopic = CampaignQuest.canComplete(6);
+		String[] topics = hasRoadTopic
+				? new String[] { Messages.get(this, "ask_story"), Messages.get(this, "ask_place"),
+						Messages.get(this, "road_topic"), Messages.get(this, "goodbye") }
+				: new String[] { Messages.get(this, "ask_story"), Messages.get(this, "ask_place"),
+						Messages.get(this, "goodbye") };
 		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
-				Messages.get(this, "greeting"),
-				Messages.get(this, "ask_story"),
-				Messages.get(this, "ask_place"),
-				Messages.get(this, "goodbye")) {
+				Messages.get(this, "greeting"), topics) {
 			@Override
 			protected void onSelect(int index) {
 				if (index == 0) {
 					showReply("story");
 				} else if (index == 1) {
 					showReply("place");
+				} else if (index == 2 && hasRoadTopic) {
+					CampaignQuest.hearWoodcutter();
+					showReply("road");
 				}
 			}
 		});
@@ -81,7 +88,7 @@ public class Villager extends NPC {
 	private void showReply(String topic) {
 		String reply = Messages.get(this, topic);
 		SurfaceHandcart cart = handcart();
-		if (cart != null && !cart.isMoved()) {
+		if (!"road".equals(topic) && cart != null && !cart.isMoved()) {
 			reply += "\n\n" + Messages.get(this, topic + "_cart");
 		}
 		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),

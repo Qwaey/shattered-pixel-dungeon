@@ -7,6 +7,7 @@ package com.shatteredpixel.shatteredpixeldungeon.effects;
 
 import com.shatteredpixel.shatteredpixeldungeon.levels.OutdoorLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.SectionPassage;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
@@ -33,10 +34,12 @@ public class PassageFade extends Visual {
 	private final FloatBuffer vertices;
 	private final int quads;
 	private final boolean vertical, nearEdge;
+	private final LevelTransition transition;
 	private Vertexbuffer buffer;
 
 	public PassageFade(OutdoorLevel level, LevelTransition transition) {
 		super(0, 0, 0, 0);
+		this.transition = transition;
 		texture = TextureCache.createGradient(RAMP);
 		vertical = transition.top <= 2 || transition.bottom >= level.height() - 3;
 		nearEdge = vertical ? transition.top <= 2 : transition.left <= 2;
@@ -93,6 +96,7 @@ public class PassageFade extends Visual {
 
 	@Override
 	public void draw() {
+		if (transition instanceof SectionPassage && !((SectionPassage) transition).isOpen()) return;
 		super.draw();
 		if (buffer == null) buffer = new Vertexbuffer(vertices);
 		NoosaScript script = NoosaScriptNoLighting.get();

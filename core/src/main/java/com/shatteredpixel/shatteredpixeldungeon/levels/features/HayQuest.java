@@ -147,6 +147,7 @@ public class HayQuest implements Bundlable {
 				return;
 			}
 			completed = true;
+			CampaignQuest.recordVillageQuest(4);
 			updateNotes();
 			for (int i = 0; i < REWARD_DEW; i++) {
 				Dewdrop dew = new Dewdrop();

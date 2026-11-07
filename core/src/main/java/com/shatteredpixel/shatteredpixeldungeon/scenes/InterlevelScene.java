@@ -657,6 +657,8 @@ public class InterlevelScene extends PixelScene {
 			}
 			Dungeon.saveAll();
 
+			int sourceDepth = Dungeon.depth;
+			int sourceBranch = Dungeon.branch;
 			Level level;
 			Dungeon.depth = curTransition.destDepth;
 			Dungeon.branch = curTransition.destBranch;
@@ -667,7 +669,10 @@ public class InterlevelScene extends PixelScene {
 				level = Dungeon.newLevel();
 			}
 
-			LevelTransition destTransition = level.getTransition(curTransition.destType);
+			LevelTransition destTransition = curTransition.type == LevelTransition.Type.SECTION
+					? level.getSectionTransitionFrom(sourceDepth, sourceBranch)
+					: level.getTransition(curTransition.destType);
+			if (destTransition == null) throw new IOException("Missing arrival transition");
 			curTransition = null;
 			Dungeon.switchLevel( level, level.transitionArrivalCell(destTransition) );
 		}

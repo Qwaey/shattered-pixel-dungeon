@@ -29,7 +29,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.BerryPie;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Bucket;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.FlourSack;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.PieBerries;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.PieParcel;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.YendorAmulet;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.CampaignQuest;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GrandmotherSprite;
@@ -72,10 +75,55 @@ public class Grandmother extends NPC {
 		Game.runOnRenderThread(new Callback() {
 			@Override
 			public void call() {
-				showQuest();
+				if (CampaignQuest.canComplete(5)
+						&& Dungeon.hero.belongings.getItem(YendorAmulet.class) != null) {
+					showAmuletTopics();
+				} else if (CampaignQuest.reached(6) && !CampaignQuest.reached(9)
+						&& Dungeon.hero.belongings.getItem(PieParcel.class) == null) {
+					showDeliveryTopics();
+				} else {
+					showQuest();
+				}
 			}
 		});
 		return true;
+	}
+
+	private void showAmuletTopics() {
+		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
+				Messages.get(this, "amulet_greeting"), Messages.get(this, "amulet_topic"),
+				Messages.get(this, "pie_topic"), Messages.get(this, "later")) {
+			@Override
+			protected void onSelect(int index) {
+				if (index == 0 && CampaignQuest.complete(5)) {
+					GLog.w(Messages.get(YendorAmulet.class, "returns"));
+					GameScene.show(new WndQuest(Grandmother.this, Messages.get(Grandmother.this, "amulet_reply")));
+				} else if (index == 1) {
+					showQuest();
+				}
+			}
+		});
+	}
+
+	private void showDeliveryTopics() {
+		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
+				Messages.get(this, "parcel_greeting"), Messages.get(this, "parcel_topic"),
+				Messages.get(this, "pie_topic"), Messages.get(this, "later")) {
+			@Override
+			protected void onSelect(int index) {
+				if (index == 0) {
+					PieParcel parcel = new PieParcel();
+					if (parcel.collect()) {
+						Notes.add(Notes.Landmark.PIE_DELIVERY, -2);
+						GameScene.show(new WndQuest(Grandmother.this, Messages.get(Grandmother.this, "parcel_reply")));
+					} else {
+						GameScene.show(new WndQuest(Grandmother.this, Messages.get(Grandmother.this, "no_space")));
+					}
+				} else if (index == 1) {
+					showQuest();
+				}
+			}
+		});
 	}
 
 	private void showQuest() {
@@ -142,6 +190,7 @@ public class Grandmother extends NPC {
 			return;
 		}
 		stage = Stage.COMPLETED;
+		CampaignQuest.recordVillageQuest(2);
 		BerryPie reward = new BerryPie();
 		if (reward.doPickUp(Dungeon.hero)) {
 			GLog.i(Messages.capitalize(Messages.get(Dungeon.hero, "you_now_have", reward.name())));

@@ -5,6 +5,9 @@
  */
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.CampaignNPC;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.CampaignQuest;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceChoppingBlock;
@@ -13,7 +16,7 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceForest;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture.Type;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.WoodlandFloorTiles;
 
-public class WoodlandLevel extends OutdoorLevel {
+public class WoodlandLevel extends CampaignLevel {
 
 	private static final int HOUSE_Y = 12, HOUSE_WIDTH = 8, HOUSE_HEIGHT = 7;
 
@@ -106,12 +109,14 @@ public class WoodlandLevel extends OutdoorLevel {
 		placeFurniture(19, 21, Type.FIREWOOD);
 		placeFurniture(20, 15, Type.FIREWOOD);
 		placeFurniture(20, 16, Type.FIREWOOD);
+		if (CampaignQuest.reached(14)) Painter.set(this, 12, 20, Terrain.EMPTY_SP);
 
 		int passage = width() + 10;
 		LevelTransition transition = new LevelTransition(this, passage,
 				LevelTransition.Type.SECTION, 0, 0, LevelTransition.Type.SECTION);
 		transition.set(10, 1, 11, 2);
 		transitions.add(transition);
+		passage(-2, 11, 25, 12, 26, 23 * width() + 11, 6);
 		return true;
 	}
 
@@ -122,9 +127,20 @@ public class WoodlandLevel extends OutdoorLevel {
 
 	@Override
 	protected void createMobs() {
+		for (Mob mob : mobs) {
+			if (mob instanceof CampaignNPC) return;
+		}
+		waypoint(14, 19, 6);
+		waypoint(10, 17, 9);
+		waypoint(16, 13, 11);
+		waypoint(21, 17, 12);
+		waypoint(12, 19, 14);
+		waypoint(14, 16, 15);
 	}
 
 	@Override
-	protected void createItems() {
+	public void campaignChanged() {
+		super.campaignChanged();
+		if (CampaignQuest.reached(14)) openTerrain(cell(12, 20), Terrain.EMPTY_SP);
 	}
 }

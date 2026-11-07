@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.CampaignNPC;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Grandmother;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Miron;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Villager;
@@ -347,10 +348,12 @@ public class SurfaceLevel extends OutdoorLevel {
 		boolean hasVillager = false;
 		boolean hasGrandmother = false;
 		boolean hasMiron = false;
+		boolean hasBarnClue = false;
 		for (Mob mob : mobs) {
 			if (mob instanceof Villager) hasVillager = true;
 			if (mob instanceof Grandmother) hasGrandmother = true;
 			if (mob instanceof Miron) hasMiron = true;
+			if (mob instanceof CampaignNPC && ((CampaignNPC) mob).quest() == 1014) hasBarnClue = true;
 		}
 
 		if (!hasVillager) {
@@ -370,6 +373,11 @@ public class SurfaceLevel extends OutdoorLevel {
 			// At the northern edge of the field, away from doors and haystacks.
 			miron.pos = 24 * width() + 22;
 			mobs.add(miron);
+		}
+		if (!hasBarnClue) {
+			CampaignNPC clue = new CampaignNPC(1014);
+			clue.pos = (BARN_Y + 5) * width() + BARN_X + 6;
+			mobs.add(clue);
 		}
 	}
 
