@@ -24,6 +24,7 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFloorTiles;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceForest;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceHandcart;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceLandscapeTiles;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Music;
 import com.watabou.utils.Bundle;
@@ -37,12 +38,38 @@ public abstract class OutdoorLevel extends Level {
 
 	@Override
 	public String tilesTex() {
-		return Assets.Environment.TILES_SURFACE_CLIFFS;
+		return landscapeStyle() == null ? Assets.Environment.TILES_SURFACE_CLIFFS
+				: Assets.Environment.TILES_CAMPAIGN_SURFACE;
 	}
 
 	@Override
 	public String waterTex() {
-		return Assets.Environment.WATER_SEWERS;
+		SurfaceLandscapeTiles.Style style = landscapeStyle();
+		if (style == null) return Assets.Environment.WATER_SEWERS;
+		return style.saltWater ? Assets.Environment.WATER_CAMPAIGN_COAST : Assets.Environment.WATER_CAMPAIGN_RIVER;
+	}
+
+	public SurfaceLandscapeTiles.Style landscapeStyle() {
+		return null;
+	}
+
+	protected boolean keepsEarthCliffs() {
+		return true;
+	}
+
+	protected boolean isDeckCell(int x, int y) {
+		return false;
+	}
+
+	public boolean isInterior(int cell) {
+		return isHouseCell(cell % width(), cell / width());
+	}
+
+	public boolean isDeck(int cell) {
+		int terrain = map[cell];
+		return (terrain == Terrain.EMPTY_SP || terrain == Terrain.EMPTY
+				|| terrain == Terrain.CUSTOM_DECO || terrain == Terrain.SURFACE_DECO)
+				&& !isInterior(cell) && isDeckCell(cell % width(), cell / width());
 	}
 
 	@Override
@@ -52,7 +79,7 @@ public abstract class OutdoorLevel extends Level {
 
 	public int floorVisual(int cell) {
 		// A decoration can replace the terrain's flags without replacing its floor.
-		if (isHouseCell(cell % width(), cell / width())) {
+		if (isInterior(cell)) {
 			return DungeonTileSheet.getVisualWithAlts(DungeonTileSheet.FLOOR_SP, cell);
 		}
 		return outdoorFloorVisual(cell);
@@ -145,9 +172,17 @@ public abstract class OutdoorLevel extends Level {
 	}
 
 	public boolean isEarthWall(int cell) {
+		return keepsEarthCliffs() && isOutdoorWall(cell);
+	}
+
+	public boolean isNaturalBarrier(int cell) {
+		return !keepsEarthCliffs() && isOutdoorWall(cell);
+	}
+
+	private boolean isOutdoorWall(int cell) {
 		return cell >= 0 && cell < length()
 				&& (map[cell] == Terrain.WALL || map[cell] == Terrain.WALL_DECO)
-				&& !isHouseCell(cell % width(), cell / width());
+				&& !isInterior(cell);
 	}
 
 	// The physical outer row stays sealed; the section trigger lies just inside it.

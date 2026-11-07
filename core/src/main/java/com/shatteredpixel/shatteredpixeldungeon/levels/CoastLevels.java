@@ -15,6 +15,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.features.CampaignQuest;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior.Type;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceLandscapeTiles.Style;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfacePathTiles;
 
 public final class CoastLevels {
@@ -23,6 +24,12 @@ public final class CoastLevels {
 	}
 
 	public static class LastSettlement extends RiverSection {
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 10, 17, 2, 1);
+		}
+
 		private static final int[][] ROUTES = {
 				{1, 11, 7, 11, 10, 12, 16, 12, 20, 11, 24, 11},
 				{8, 9, 8, 11, 8, 14, 11, 17}, {15, 9, 15, 12}
@@ -84,6 +91,13 @@ public final class CoastLevels {
 	}
 
 	public static class Orchards extends RiverSection {
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 8, 12, 5, 2) || inDeck(x, y, 14, 4, 2, 5)
+					|| inDeck(x, y, 8, 14, 2, 5) || inDeck(x, y, 16, 16, 2, 2);
+		}
+
 		private static final int[][] ROUTES = {
 				{1, 12, 9, 12, 13, 12, 17, 12, 22, 12, 28, 12},
 				{14, 1, 14, 8, 15, 12}, {9, 13, 9, 19, 16, 19, 16, 14}
@@ -147,6 +161,19 @@ public final class CoastLevels {
 	}
 
 	public static class Spillway extends AmbushLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.COAST;
+		}
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 1, 9, 6, 6) || inDeck(x, y, 3, 14, 3, 5)
+					|| inDeck(x, y, 4, 7, 3, 2) || (x == 7 && y == 11)
+					|| inDeck(x, y, 13, 17, 3, 2) || inDeck(x, y, 13, 19, 2, 2);
+		}
+
 		private static final int[][] ROUTES = {
 				{1, 11, 5, 11, 7, 11, 10, 11, 13, 11, 14, 15, 14, 18, 13, 22}, {5, 11, 5, 15, 4, 18}
 		};
@@ -286,6 +313,17 @@ public final class CoastLevels {
 	}
 
 	public static class CoastStation extends RiverSection {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.COAST;
+		}
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 10, 16, 4, 5);
+		}
+
 		private static final int[][] ROUTES = {
 				{11, 1, 11, 5, 11, 9, 12, 12, 11, 17, 11, 20}, {7, 9, 7, 11, 11, 12, 16, 13, 16, 11}
 		};
@@ -333,6 +371,19 @@ public final class CoastLevels {
 	}
 
 	public static class WreckBay extends RiverSection {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.COAST;
+		}
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 11, 8, 8, 3) || inDeck(x, y, 11, 11, 2, 7)
+					|| inDeck(x, y, 11, 17, 11, 3) || inDeck(x, y, 17, 10, 6, 7)
+					|| inDeck(x, y, 14, 23, 2, 4) || inDeck(x, y, 13, 13, 4, 1);
+		}
+
 		private static final int[][] ROUTES = {
 				{14, 1, 14, 5, 18, 7, 22, 8, 24, 11, 28, 13},
 				{18, 7, 18, 11, 20, 15, 20, 19, 17, 21, 14, 26}, {24, 11, 25, 15, 23, 19, 17, 21}
@@ -390,6 +441,12 @@ public final class CoastLevels {
 	}
 
 	public static class BeaconChain extends AmbushLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.COAST;
+		}
+
 		private static final int[][] ROUTES = {
 				{13, 1, 13, 7, 13, 10, 14, 12, 18, 12, 21, 12, 26, 12}, {14, 12, 14, 16, 18, 16}
 		};
@@ -450,6 +507,17 @@ public final class CoastLevels {
 	}
 
 	public static class Shipyard extends RiverSection {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.COAST;
+		}
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 14, 12, 5, 7) || inDeck(x, y, 7, 14, 7, 3);
+		}
+
 		private static final int[][] ROUTES = {
 				{1, 10, 6, 10, 9, 11, 14, 11, 16, 12, 16, 17}, {12, 9, 12, 11}
 		};

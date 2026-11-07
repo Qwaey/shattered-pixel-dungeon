@@ -6,8 +6,23 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.CampaignNPC;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceLandscapeTiles.Style;
 
 public abstract class CampaignLevel extends OutdoorLevel {
+
+	@Override
+	public Style landscapeStyle() {
+		return Style.MEADOW;
+	}
+
+	@Override
+	protected boolean keepsEarthCliffs() {
+		return false;
+	}
+
+	protected static boolean inDeck(int x, int y, int left, int top, int width, int height) {
+		return x >= left && x < left + width && y >= top && y < top + height;
+	}
 
 	public static Level atDepth(int depth) {
 		switch (depth) {

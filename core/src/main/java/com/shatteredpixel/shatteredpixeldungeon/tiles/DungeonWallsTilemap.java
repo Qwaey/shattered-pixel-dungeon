@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.tiles;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.OutdoorLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 
 import java.util.HashSet;
@@ -38,6 +39,13 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 
 	@Override
 	protected int getTileVisual(int pos, int tile, boolean flat){
+		if (Dungeon.level instanceof OutdoorLevel) {
+			OutdoorLevel level = (OutdoorLevel) Dungeon.level;
+			if (level.isNaturalBarrier(pos)) {
+				if (flat || skipCells.contains(pos) || level.isPassageMouth(pos)) return -1;
+				return SurfaceLandscapeTiles.barrierVisual(level, level.landscapeStyle(), pos);
+			}
+		}
 		return SurfaceCliffTiles.visual(pos, wallVisual(pos, tile, flat), true);
 	}
 
@@ -46,7 +54,7 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 		if (flat) return -1;
 
 		if (DungeonTileSheet.wallStitcheable(tile)) {
-			if (pos + mapWidth < size && !DungeonTileSheet.wallStitcheable(map[pos + mapWidth])){
+			if (pos + mapWidth < size && !DungeonTileSheet.wallStitcheable(terrainForWalls(pos + mapWidth))){
 
 				if (map[pos + mapWidth] == Terrain.DOOR){
 					return DungeonTileSheet.DOOR_SIDEWAYS;
@@ -63,11 +71,11 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 			} else {
 				return DungeonTileSheet.stitchInternalWallTile(
 						tile,
-						(pos+1) % mapWidth != 0 ?                           map[pos + 1] : -1,
-						(pos+1) % mapWidth != 0 && pos + mapWidth < size ?  map[pos + 1 + mapWidth] : -1,
-						pos + mapWidth < size ?                             map[pos + mapWidth] : -1,
-						pos % mapWidth != 0 && pos + mapWidth < size ?      map[pos - 1 + mapWidth] : -1,
-						pos % mapWidth != 0 ?                               map[pos - 1] : -1
+						(pos+1) % mapWidth != 0 ?                           terrainForWalls(pos + 1) : -1,
+						(pos+1) % mapWidth != 0 && pos + mapWidth < size ?  terrainForWalls(pos + 1 + mapWidth) : -1,
+						pos + mapWidth < size ?                             terrainForWalls(pos + mapWidth) : -1,
+						pos % mapWidth != 0 && pos + mapWidth < size ?      terrainForWalls(pos - 1 + mapWidth) : -1,
+						pos % mapWidth != 0 ?                               terrainForWalls(pos - 1) : -1
 				);
 			}
 
@@ -79,13 +87,13 @@ public class DungeonWallsTilemap extends DungeonTilemap {
 
 		if (map[pos] == Terrain.LOCKED_EXIT || map[pos] == Terrain.UNLOCKED_EXIT){
 			return DungeonTileSheet.EXIT_UNDERHANG;
-		} else if (pos + mapWidth < size && DungeonTileSheet.wallStitcheable(map[pos+mapWidth])) {
+		} else if (pos + mapWidth < size && DungeonTileSheet.wallStitcheable(terrainForWalls(pos + mapWidth))) {
 
 			return DungeonTileSheet.stitchWallOverhangTile(
 					tile,
-					(pos+1) % mapWidth != 0 ?   map[pos + 1 + mapWidth] : -1,
-												map[pos + mapWidth],
-					pos % mapWidth != 0 ?       map[pos - 1 + mapWidth] : -1
+					(pos+1) % mapWidth != 0 ?   terrainForWalls(pos + 1 + mapWidth) : -1,
+												terrainForWalls(pos + mapWidth),
+					pos % mapWidth != 0 ?       terrainForWalls(pos - 1 + mapWidth) : -1
 			);
 
 		} else if (Dungeon.level.insideMap(pos) && map[pos+mapWidth] == Terrain.DOOR ) {

@@ -9,8 +9,20 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Emberling;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Reedcutter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceLandscapeTiles.Style;
 
 public class DikeLevel extends AmbushLevel {
+
+	@Override
+	public Style landscapeStyle() {
+		return Style.MARSH;
+	}
+
+	@Override
+	protected boolean isDeckCell(int x, int y) {
+		return inDeck(x, y, 12, 16, 2, 5);
+	}
+
 
 	private static final int AMBUSH_QUEST = 19;
 

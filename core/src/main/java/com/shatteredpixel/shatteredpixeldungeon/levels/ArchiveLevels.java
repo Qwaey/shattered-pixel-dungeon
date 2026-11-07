@@ -18,6 +18,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior.Type;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceLandscapeTiles.Style;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfacePathTiles;
 import com.watabou.utils.Bundle;
 
@@ -44,6 +45,12 @@ public final class ArchiveLevels {
 	}
 
 	private abstract static class HillSection extends CampaignLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.HIGHLAND;
+		}
+
 		protected abstract int[][] routes();
 
 		@Override
@@ -58,6 +65,12 @@ public final class ArchiveLevels {
 	}
 
 	public static class Quarry extends HillSection {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.CHALK;
+		}
+
 		private static final int[][] ROCKS = {
 				{1, 1, 5, 6}, {6, 1, 4, 2}, {21, 1, 8, 6}, {27, 7, 2, 5},
 				{7, 9, 6, 1}, {16, 9, 8, 1}, {6, 16, 7, 2}, {16, 17, 3, 2},
@@ -161,6 +174,12 @@ public final class ArchiveLevels {
 	}
 
 	public static class Mine extends AmbushLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.CHALK;
+		}
+
 		private static final int[][] ROCKS = {
 				{1, 1, 8, 2}, {15, 1, 8, 2}, {1, 3, 2, 9}, {20, 3, 3, 9},
 				{3, 3, 16, 12}, {5, 15, 4, 1}, {16, 15, 5, 1},
@@ -267,6 +286,12 @@ public final class ArchiveLevels {
 	}
 
 	public static class MountainRoad extends AmbushLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.HIGHLAND;
+		}
+
 		private static final int[][] ROCKS = {
 				{1, 1, 8, 5}, {20, 1, 9, 5}, {18, 6, 5, 2},
 				{1, 7, 4, 5}, {12, 8, 3, 3}, {25, 8, 4, 4},

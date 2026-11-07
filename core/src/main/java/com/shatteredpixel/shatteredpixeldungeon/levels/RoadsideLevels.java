@@ -15,6 +15,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior.Type;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceLandscapeTiles.Style;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfacePathTiles;
 
 public final class RoadsideLevels {
@@ -23,6 +24,11 @@ public final class RoadsideLevels {
 	}
 
 	public abstract static class RiverSection extends CampaignLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.MARSH;
+		}
 
 		protected void ground(int width, int height) {
 			setSize(width, height);
@@ -85,6 +91,11 @@ public final class RoadsideLevels {
 	}
 
 	public static class OldRoad extends RiverSection {
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 14, 11, 1, 2);
+		}
 
 		private static final int[][] ROUTES = {
 				{12, 1, 12, 5, 11, 7, 12, 9, 14, 11, 18, 11, 20, 12, 24, 11},
@@ -168,6 +179,11 @@ public final class RoadsideLevels {
 	}
 
 	public static class Ferry extends RiverSection {
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 7, 12, 3, 6) || inDeck(x, y, 10, 16, 2, 2) || (x == 10 && y == 15);
+		}
 
 		private static final int[][] ROUTES = {
 				{1, 9, 7, 9, 10, 10, 14, 10, 17, 9, 22, 9},
@@ -306,6 +322,12 @@ public final class RoadsideLevels {
 
 	public static class Hamlet extends RiverSection {
 
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 9, 15, 4, 4) || inDeck(x, y, 14, 14, 3, 2)
+					|| inDeck(x, y, 13, 16, 4, 1);
+		}
+
 		private static final int[][] ROUTES = {
 				{10, 18, 10, 14, 10, 11, 11, 10, 12, 8},
 				{6, 9, 6, 11, 10, 11, 15, 11, 15, 9}
@@ -368,6 +390,11 @@ public final class RoadsideLevels {
 	}
 
 	public static class SaltYard extends RiverSection {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.COAST;
+		}
 
 		private static final int[][] ROUTES = {
 				{11, 1, 11, 5, 12, 8, 12, 11, 13, 14, 16, 15, 20, 14},

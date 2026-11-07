@@ -46,6 +46,20 @@ public class DungeonTerrainTilemap extends DungeonTilemap {
 	}
 
 	private int terrainVisual(int pos, int tile, boolean flat) {
+		if (Dungeon.level instanceof OutdoorLevel) {
+			OutdoorLevel level = (OutdoorLevel) Dungeon.level;
+			SurfaceLandscapeTiles.Style style = level.landscapeStyle();
+			if (style != null) {
+				if (SurfaceLandscapeTiles.isWater(tile)) return SurfaceLandscapeTiles.waterVisual(level, style, pos);
+				if ((tile == Terrain.EMPTY_SP && !level.isInterior(pos)) || level.isDeck(pos)) {
+					return SurfaceLandscapeTiles.pathVisual(level, style, pos);
+				}
+				if (level.isNaturalBarrier(pos)) {
+					return flat ? SurfaceLandscapeTiles.barrierVisual(level, style, pos)
+							: SurfaceLandscapeTiles.barrierGround(level, style, pos);
+				}
+			}
+		}
 		int visual = DungeonTileSheet.directVisuals.get(tile, -1);
 		if (visual != -1) {
 			if (Dungeon.level instanceof OutdoorLevel
@@ -77,14 +91,14 @@ public class DungeonTerrainTilemap extends DungeonTilemap {
 
 		if (!flat) {
 			if ((DungeonTileSheet.doorTile(tile))) {
-				return DungeonTileSheet.getRaisedDoorTile(tile, map[pos - mapWidth]);
+				return DungeonTileSheet.getRaisedDoorTile(tile, terrainForWalls(pos - mapWidth));
 			} else if (DungeonTileSheet.wallStitcheable(tile)){
 				return DungeonTileSheet.getRaisedWallTile(
 						tile,
 						pos,
-						(pos+1) % mapWidth != 0 ?   map[pos + 1] : -1,
-						pos + mapWidth < size ?     map[pos + mapWidth] : -1,
-						pos % mapWidth != 0 ?       map[pos - 1] : -1
+						(pos+1) % mapWidth != 0 ?   terrainForWalls(pos + 1) : -1,
+						pos + mapWidth < size ?     terrainForWalls(pos + mapWidth) : -1,
+						pos % mapWidth != 0 ?       terrainForWalls(pos - 1) : -1
 						);
 			} else if (tile == Terrain.STATUE) {
 				return DungeonTileSheet.RAISED_STATUE;

@@ -18,6 +18,11 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.WoodlandFloorTiles;
 
 public class WoodlandLevel extends CampaignLevel {
 
+	@Override
+	protected boolean keepsEarthCliffs() {
+		return true;
+	}
+
 	private static final int HOUSE_Y = 12, HOUSE_WIDTH = 8, HOUSE_HEIGHT = 7;
 
 	private int houseX() {

@@ -17,6 +17,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.SheepSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceExterior.Type;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceFurniture;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.SurfaceLandscapeTiles.Style;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Group;
 import com.watabou.utils.Bundle;
@@ -46,6 +47,12 @@ public final class EdgeLevels {
 	}
 
 	private abstract static class QuietSection extends CampaignLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.EDGE;
+		}
+
 		@Override
 		protected void createMobs() {
 		}
@@ -132,6 +139,12 @@ public final class EdgeLevels {
 	public static class Plateau extends AmbushLevel {
 
 		@Override
+		public Style landscapeStyle() {
+			return Style.EDGE;
+		}
+
+
+		@Override
 		protected boolean build() {
 			ground(this, 30, 28);
 			cliff(this, 1, 1, 7, 5);
@@ -198,6 +211,17 @@ public final class EdgeLevels {
 	public static class Boundary extends CampaignLevel {
 
 		@Override
+		public Style landscapeStyle() {
+			return Style.EDGE;
+		}
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 13, 6, 2, 2) || (x == 10 && y == 18);
+		}
+
+
+		@Override
 		protected boolean build() {
 			ground(this, 28, 24);
 			cliff(this, 1, 1, 10, 5);
@@ -247,6 +271,12 @@ public final class EdgeLevels {
 	}
 
 	public static class Terraces extends CampaignLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.EDGE;
+		}
+
 
 		@Override
 		protected boolean build() {
@@ -344,6 +374,17 @@ public final class EdgeLevels {
 	public static class Windwalk extends CampaignLevel {
 
 		@Override
+		public Style landscapeStyle() {
+			return Style.EDGE;
+		}
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 20, 11, 1, 2);
+		}
+
+
+		@Override
 		protected boolean build() {
 			ground(this, 28, 24);
 			cliff(this, 1, 1, 7, 7);
@@ -398,6 +439,17 @@ public final class EdgeLevels {
 	}
 
 	public static class Brink extends AmbushLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.EDGE;
+		}
+
+		@Override
+		protected boolean isDeckCell(int x, int y) {
+			return inDeck(x, y, 21, 12, 2, 1);
+		}
+
 
 		@Override
 		protected boolean build() {
@@ -465,6 +517,12 @@ public final class EdgeLevels {
 	}
 
 	public static class Storehouse extends CampaignLevel {
+
+		@Override
+		public Style landscapeStyle() {
+			return Style.EDGE;
+		}
+
 
 		@Override
 		protected boolean build() {

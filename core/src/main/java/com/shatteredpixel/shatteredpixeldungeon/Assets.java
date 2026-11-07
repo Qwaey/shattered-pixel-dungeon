@@ -41,6 +41,9 @@ public class Assets {
 
 		public static final String TILES_SURFACE = "environment/tiles_surface.png";
 		public static final String TILES_SURFACE_CLIFFS = "environment/tiles_surface_cliffs.png";
+		public static final String TILES_CAMPAIGN_SURFACE = "environment/tiles_campaign_surface.png";
+		public static final String WATER_CAMPAIGN_RIVER = "environment/water_campaign_river.png";
+		public static final String WATER_CAMPAIGN_COAST = "environment/water_campaign_coast.png";
 		public static final String SURFACE_FURNITURE = "environment/custom_tiles/surface_furniture.png";
 		public static final String SURFACE_EXTERIOR = "environment/custom_tiles/surface_exterior.png";
 		public static final String SURFACE_CHOPPING_BLOCK = "environment/exterior/chopping_block.png";

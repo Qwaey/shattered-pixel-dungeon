@@ -202,7 +202,7 @@ public class WallBlockingTilemap extends Tilemap {
 	}
 
 	private boolean wall(int cell) {
-		return DungeonTileSheet.wallStitcheable(Dungeon.level.map[cell]);
+		return DungeonTileSheet.wallStitcheable(SurfaceLandscapeTiles.terrainForWalls(Dungeon.level, cell));
 	}
 
 	private boolean shelf(int cell) {
