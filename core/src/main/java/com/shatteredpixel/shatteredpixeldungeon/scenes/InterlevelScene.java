@@ -37,7 +37,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.SkeletonKey;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.StartLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.CampaignQuest;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -648,6 +650,7 @@ public class InterlevelScene extends PixelScene {
 
 			Level level = Dungeon.newLevel();
 			Dungeon.switchLevel( level, -1 );
+			if (level instanceof StartLevel) CampaignQuest.announceStart(1);
 		} else {
 			if (curTransition.destBranch != Dungeon.branch && Dungeon.depth >= 16 && Dungeon.depth <= 20) {
 				//FIXME avoids holding allies when entering city quest area, this is very sloppy though
@@ -709,6 +712,7 @@ public class InterlevelScene extends PixelScene {
 		Level level;
 		Dungeon.depth = curTransition.destDepth;
 		Dungeon.branch = curTransition.destBranch;
+		boolean firstSurface = Dungeon.depth == 0 && Dungeon.branch == 0 && !CampaignQuest.reached(1);
 
 		if (Dungeon.levelHasBeenGenerated(Dungeon.depth, Dungeon.branch)) {
 			level = Dungeon.loadLevel( GamesInProgress.curSlot );
@@ -719,6 +723,7 @@ public class InterlevelScene extends PixelScene {
 		LevelTransition destTransition = level.getTransition(curTransition.destType);
 		curTransition = null;
 		Dungeon.switchLevel( level, level.transitionArrivalCell(destTransition) );
+		if (firstSurface) CampaignQuest.onFirstSurfaceArrival();
 	}
 	
 	private void returnTo() throws IOException {

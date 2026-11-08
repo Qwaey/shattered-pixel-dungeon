@@ -38,10 +38,14 @@ public abstract class NPC extends Mob {
 	@Override
 	protected boolean act() {
 		if (Dungeon.level.heroFOV[pos]){
-			Bestiary.setSeen(getClass());
+			discoverInBestiary();
 		}
 
 		return super.act();
+	}
+
+	protected void discoverInBestiary() {
+		Bestiary.setSeen(getClass());
 	}
 
 	@Override

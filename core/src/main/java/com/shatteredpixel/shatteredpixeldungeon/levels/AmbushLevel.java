@@ -11,6 +11,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogDzewa;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.CampaignQuest;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -141,6 +143,7 @@ public abstract class AmbushLevel extends CampaignLevel {
 		GameScene.updateFog();
 		Sample.INSTANCE.play(Assets.Sounds.CURSED);
 		GLog.w(ambushMessage("warning"));
+		Bestiary.setSeen(YogDzewa.class);
 		// One turn for the triggering interaction and another for preparation.
 		clock = new AmbushClock();
 		Actor.addDelayed(clock, 2 * Actor.TICK);

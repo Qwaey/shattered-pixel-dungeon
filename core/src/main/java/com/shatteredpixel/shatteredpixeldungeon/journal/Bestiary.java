@@ -30,14 +30,15 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Acidic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Albino;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredBrute;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredStatue;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.AshWarden;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bandit;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bat;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bee;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Brute;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CausticSlime;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Cliffstalker;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Crab;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Senogryz;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Miron;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Cragpecker;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CrystalGuardian;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CrystalMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CrystalSpire;
@@ -50,9 +51,16 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DwarfKing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.EbonyMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elemental;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.EmberHound;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Emberling;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Eye;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FetidRat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Fireweaver;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FungalCore;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FungalSentry;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FungalSpinner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Ghoul;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Glassshooter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Gnoll;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollExile;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollGeomancer;
@@ -63,21 +71,29 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golem;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Goo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GreatCrab;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GreyMuzzle;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Guard;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.HermitCrab;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.LimestoneCrawler;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Necromancer;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.PastureSnapper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.PhantomPiranha;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Puddleskipper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Pylon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Reedcutter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RipperDemon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rootwalker;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RotHeart;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RotLasher;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Scorpio;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Senior;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Senogryz;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Shaman;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Shellback;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Skeleton;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Slime;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
@@ -95,14 +111,18 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogDzewa;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogFist;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Grandmother;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.ImpShopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.MirrorImage;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Miron;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.PrismaticImage;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.RatKing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Sheep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.VaultLaser;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.VaultSentry;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Villager;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.quest.vault.VaultBossElemental;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.quest.vault.VaultDM100;
@@ -117,6 +137,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.quest.CorpseDust;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
+import com.shatteredpixel.shatteredpixeldungeon.levels.EdgeLevels;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SentryRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.AlarmTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.BlazingTrap;
@@ -168,9 +189,12 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 //contains all the game's various entities, mostly enemies, NPCS, and allies, but also traps and plants
 public enum Bestiary {
@@ -189,6 +213,37 @@ public enum Bestiary {
 	private final LinkedHashMap<Class<?>, Boolean> seen = new LinkedHashMap<>();
 	//tracks enemy kills, trap activations, plant tramples, or just sets to 1 for seen on allies
 	private final LinkedHashMap<Class<?>, Integer> encounterCount = new LinkedHashMap<>();
+	//Only entries reachable in the campaign appear in the journal and count towards completion.
+	private final LinkedHashSet<Class<?>> campaignEntities = new LinkedHashSet<>();
+
+	//A character's primary scene identifies their entry even when they appear in several quests.
+	private static final LinkedHashMap<Integer, Boolean> campaignPeople = new LinkedHashMap<>();
+	private static final HashMap<Integer, Integer> peopleByQuest = new HashMap<>();
+
+	private static void addPerson(int primaryQuest, int... otherQuests) {
+		campaignPeople.put(primaryQuest, false);
+		peopleByQuest.put(primaryQuest, primaryQuest);
+		for (int quest : otherQuests) {
+			peopleByQuest.put(quest, primaryQuest);
+		}
+	}
+
+	public static Collection<Integer> campaignPeople() {
+		return Collections.unmodifiableSet(campaignPeople.keySet());
+	}
+
+	public static boolean isCampaignPersonSeen(int primaryQuest) {
+		return Boolean.TRUE.equals(campaignPeople.get(primaryQuest));
+	}
+
+	public static void seeCampaignPerson(int quest) {
+		Integer person = peopleByQuest.get(quest);
+		if (person != null && !isCampaignPersonSeen(person)) {
+			campaignPeople.put(person, true);
+			Journal.saveNeeded = true;
+			Badges.validateCatalogBadges();
+		}
+	}
 
 	//should only be used when initializing
 	private void addEntities(Class<?>... classes ){
@@ -198,8 +253,13 @@ public enum Bestiary {
 		}
 	}
 
-	public Collection<Class<?>> entities(){
-		return seen.keySet();
+	private void addCampaignEntities(Class<?>... classes) {
+		addEntities(classes);
+		Collections.addAll(campaignEntities, classes);
+	}
+
+	public Collection<Class<?>> visibleEntities() {
+		return Collections.unmodifiableSet(campaignEntities);
 	}
 
 	public String title(){
@@ -207,13 +267,18 @@ public enum Bestiary {
 	}
 
 	public int totalEntities(){
-		return seen.size();
+		return campaignEntities.size() + (this == NEUTRAL ? campaignPeople.size() : 0);
 	}
 
 	public int totalSeen(){
 		int seenTotal = 0;
-		for (boolean entitySeen : seen.values()){
-			if (entitySeen) seenTotal++;
+		for (Class<?> entity : campaignEntities) {
+			if (seen.get(entity)) seenTotal++;
+		}
+		if (this == NEUTRAL) {
+			for (boolean personSeen : campaignPeople.values()) {
+				if (personSeen) seenTotal++;
+			}
 		}
 		return seenTotal;
 	}
@@ -225,12 +290,15 @@ public enum Bestiary {
 				Bat.class, Brute.class, Shaman.RedShaman.class, Shaman.BlueShaman.class, Shaman.PurpleShaman.class, Spinner.class, DM200.class,
 				Ghoul.class, Elemental.FireElemental.class, Elemental.FrostElemental.class, Elemental.ShockElemental.class, Warlock.class, Monk.class, Golem.class,
 				RipperDemon.class, DemonSpawner.class, Succubus.class, Eye.class, Scorpio.class);
+		REGIONAL.addCampaignEntities(Rootwalker.class, Reedcutter.class, LimestoneCrawler.class, Cragpecker.class,
+				Puddleskipper.class, Shellback.class, Cliffstalker.class);
 
 		BOSSES.addEntities(Goo.class,
 				Tengu.class,
 				Pylon.class, DM300.class,
 				DwarfKing.class,
-				YogDzewa.Larva.class, YogFist.BurningFist.class, YogFist.SoiledFist.class, YogFist.RottingFist.class, YogFist.RustedFist.class,YogFist.BrightFist.class, YogFist.DarkFist.class, YogDzewa.class);
+				YogDzewa.Larva.class, YogFist.BurningFist.class, YogFist.SoiledFist.class, YogFist.RottingFist.class, YogFist.RustedFist.class,YogFist.BrightFist.class, YogFist.DarkFist.class);
+		BOSSES.addCampaignEntities(YogDzewa.class);
 
 		UNIVERSAL.addEntities(Wraith.class, Piranha.class, Mimic.class, GoldenMimic.class, EbonyMimic.class, Statue.class, GuardianTrap.Guardian.class, SentryRoom.Sentry.class);
 
@@ -241,12 +309,44 @@ public enum Bestiary {
 				Acidic.class,
 				TormentedSpirit.class, PhantomPiranha.class, CrystalMimic.class, ArmoredStatue.class);
 
-		QUEST.addEntities(Senogryz.class, FetidRat.class, GnollTrickster.class, GreatCrab.class,
+		QUEST.addEntities(FetidRat.class, GnollTrickster.class, GreatCrab.class,
 				Elemental.NewbornFireElemental.class, RotLasher.class, RotHeart.class,
 				CrystalWisp.class, CrystalGuardian.class, CrystalSpire.class, GnollGuard.class, GnollSapper.class, GnollGeomancer.class,
-				VaultSkeleton.class, VaultDM100.class, VaultShaman.class, VaultDM200.class, VaultSentry.class, VaultLaser.class, VaultBossElemental.class);
+				VaultSkeleton.class, VaultDM100.class, VaultShaman.class, VaultDM200.class, VaultSentry.class, VaultLaser.class, VaultBossElemental.class,
+				FungalCore.class, FungalSentry.class, FungalSpinner.class);
+		QUEST.addCampaignEntities(Senogryz.class, GreyMuzzle.class, PastureSnapper.class, Emberling.class,
+				EmberHound.class, Fireweaver.class, Glassshooter.class, AshWarden.class);
 
-		NEUTRAL.addEntities(Miron.class, Ghost.class, RatKing.class, Shopkeeper.class, Wandmaker.class, Blacksmith.class, Imp.class, Sheep.class, Bee.class);
+		NEUTRAL.addEntities(Ghost.class, RatKing.class, Shopkeeper.class, Wandmaker.class, Blacksmith.class, Imp.class, Bee.class);
+		NEUTRAL.addCampaignEntities(Miron.class, Grandmother.class, Villager.class, EdgeLevels.PenSheep.class, Sheep.class);
+
+		addPerson(9, 11);          //Darya
+		addPerson(16);             //Taisia
+		addPerson(17, 24);          //Luka
+		addPerson(22, 30);          //Ferry bell keeper
+		addPerson(28);             //Landing keeper
+		addPerson(1030);           //Farmstead householder
+		addPerson(31, 36);          //Irina
+		addPerson(33);             //Sila
+		addPerson(34);             //Lada
+		addPerson(37);             //Potter
+		addPerson(46, 91, 95, 104); //Ratmir
+		addPerson(116, 51, 52);     //Vera
+		addPerson(59);             //Shelter keeper
+		addPerson(61, 74);          //Savva
+		addPerson(75);             //Domna
+		addPerson(67);             //Old man at the flood mark
+		addPerson(68);             //Orchard gardener
+		addPerson(69);             //Girl from the orchards
+		addPerson(71);             //Householder with the boot
+		addPerson(73);             //Bell Yard keeper
+		addPerson(76, 87);          //Marfa
+		addPerson(83);             //Shipyard foreman
+		addPerson(89);             //Signal keeper
+		addPerson(96);             //Watchman's family
+		addPerson(101, 1101);      //Mason
+		addPerson(105);            //Terrace gardener
+		addPerson(106, 120);       //Yefrosinya
 
 		ALLY.addEntities(MirrorImage.class, PrismaticImage.class,
 				DriedRose.GhostHero.class,
@@ -261,11 +361,10 @@ public enum Bestiary {
 				GeyserTrap.class, ExplosiveTrap.class, RockfallTrap.class, PitfallTrap.class,
 				DistortionTrap.class, DisarmingTrap.class, GrimTrap.class);
 
-		PLANT.addEntities(Rotberry.class, Sungrass.class, Fadeleaf.class, Icecap.class,
-				Firebloom.class, Sorrowmoss.class, Swiftthistle.class, Blindweed.class,
-				Stormvine.class, Earthroot.class, Mageroyal.class, Starflower.class,
-				BlandfruitBush.class,
+		PLANT.addEntities(Rotberry.class, Fadeleaf.class, Icecap.class, Firebloom.class, Sorrowmoss.class,
+				Swiftthistle.class, Blindweed.class, Stormvine.class, Mageroyal.class, Starflower.class, BlandfruitBush.class,
 				WandOfRegrowth.Dewcatcher.class, WandOfRegrowth.Seedpod.class, WandOfRegrowth.Lotus.class);
+		PLANT.addCampaignEntities(Sungrass.class, Earthroot.class);
 
 	}
 
@@ -273,8 +372,10 @@ public enum Bestiary {
 	private static final HashMap<Class<?>, Class<?>> classConversions = new HashMap<>();
 	static {
 		classConversions.put(CorpseDust.DustWraith.class,       Wraith.class);
+		classConversions.put(ImpShopkeeper.class,             Imp.class);
 
 		classConversions.put(Necromancer.NecroSkeleton.class,   Skeleton.class);
+		classConversions.put(Elemental.AllyNewBornElemental.class, Elemental.NewbornFireElemental.class);
 
 		classConversions.put(TenguDartTrap.class,               PoisonDartTrap.class);
 		classConversions.put(GnollRockfallTrap.class,           RockfallTrap.class);
@@ -354,6 +455,7 @@ public enum Bestiary {
 	private static final String BESTIARY_CLASSES    = "bestiary_classes";
 	private static final String BESTIARY_SEEN       = "bestiary_seen";
 	private static final String BESTIARY_ENCOUNTERS = "bestiary_encounters";
+	private static final String BESTIARY_PEOPLE     = "bestiary_people";
 
 	public static void store( Bundle bundle ){
 
@@ -362,7 +464,7 @@ public enum Bestiary {
 		ArrayList<Integer> encounters = new ArrayList<>();
 
 		for (Bestiary cat : values()) {
-			for (Class<?> entity : cat.entities()) {
+			for (Class<?> entity : cat.seen.keySet()) {
 				if (cat.seen.get(entity) || cat.encounterCount.get(entity) > 0){
 					classes.add(entity);
 					seen.add(cat.seen.get(entity));
@@ -384,10 +486,23 @@ public enum Bestiary {
 		bundle.put( BESTIARY_CLASSES, storeCls );
 		bundle.put( BESTIARY_SEEN, storeSeen );
 		bundle.put( BESTIARY_ENCOUNTERS, storeEncounters );
+		int[] storePeople = new int[campaignPeople.size()];
+		int i = 0;
+		for (int person : campaignPeople.keySet()) {
+			if (isCampaignPersonSeen(person)) storePeople[i++] = person;
+		}
+		bundle.put( BESTIARY_PEOPLE, Arrays.copyOf(storePeople, i) );
 
 	}
 
 	public static void restore( Bundle bundle ){
+
+		if (bundle.contains(BESTIARY_PEOPLE)) {
+			for (int quest : bundle.getIntArray(BESTIARY_PEOPLE)) {
+				Integer person = peopleByQuest.get(quest);
+				if (person != null) campaignPeople.put(person, true);
+			}
+		}
 
 		if (bundle.contains(BESTIARY_CLASSES)
 				&& bundle.contains(BESTIARY_SEEN)

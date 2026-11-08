@@ -134,6 +134,7 @@ public class HayQuest implements Bundlable {
 					if (index != 0 || accepted || level() == null) return;
 					accepted = true;
 					updateNotes();
+					CampaignQuest.announceStart(4);
 					miron.say("accepted");
 				}
 			});

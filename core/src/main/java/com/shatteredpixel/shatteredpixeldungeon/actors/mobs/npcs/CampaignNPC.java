@@ -11,6 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.PieParcel;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.YendorAmulet;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.levels.AmbushLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ArchiveLevels;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RoadsideLevels;
@@ -70,6 +71,20 @@ public class CampaignNPC extends NPC {
 		return line("desc");
 	}
 
+	public String bestiaryName() {
+		String bestiaryName = line("bestiary_name");
+		return Messages.NO_TEXT_FOUND.equals(bestiaryName) ? name() : bestiaryName;
+	}
+
+	@Override
+	protected void discoverInBestiary() {
+		if (spriteClass == CampaignPersonSprite.class) {
+			Bestiary.seeCampaignPerson(quest);
+		} else if (spriteClass != CampaignMarkerSprite.class) {
+			super.discoverInBestiary();
+		}
+	}
+
 	@Override
 	public boolean interact(Char c) {
 		if (c != Dungeon.hero) return true;
@@ -79,6 +94,7 @@ public class CampaignNPC extends NPC {
 	}
 
 	private void showScene(Hero hero) {
+		Bestiary.seeCampaignPerson(quest);
 		String description = quest == 43 && CampaignQuest.reached(110) ? line("after_end") : line("desc");
 		if (quest == 106 && CampaignQuest.reached(110)) {
 			CampaignQuest.finishJourney();
@@ -105,6 +121,7 @@ public class CampaignNPC extends NPC {
 				}
 			});
 		} else {
+			CampaignQuest.startSideQuest(quest);
 			GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()), description,
 					line("action"), Messages.get(this, "later")) {
 				@Override

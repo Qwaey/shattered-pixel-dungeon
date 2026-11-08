@@ -46,7 +46,7 @@ public class SurfaceHandcart extends CustomTilemap {
 
 	@Override
 	public void onExamine(int tileX, int tileY) {
-		if (!moved) Notes.add(Notes.Landmark.HANDCART);
+		if (!moved) recordDiscovery();
 	}
 
 	public boolean isMoved() {
@@ -55,6 +55,11 @@ public class SurfaceHandcart extends CustomTilemap {
 
 	public void support() {
 		supported = true;
+		recordDiscovery();
+	}
+
+	private void recordDiscovery() {
+		if (Notes.add(Notes.Landmark.HANDCART)) CampaignQuest.announceStart(3);
 	}
 
 	public void moveTo(int x, int y) {

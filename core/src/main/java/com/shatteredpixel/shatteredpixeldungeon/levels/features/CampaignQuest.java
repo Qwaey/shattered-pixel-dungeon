@@ -6,6 +6,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.features;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.CampaignNPC;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
@@ -14,11 +15,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.quest.YendorAmulet;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.OutdoorLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.stream.IntStream;
 
 public final class CampaignQuest {
 
@@ -32,8 +35,11 @@ public final class CampaignQuest {
 	};
 	private static final String STAGE = "campaign_stage";
 	private static final String WOODCUTTER_HINT = "woodcutter_hint";
+	private static final String STARTED_SIDE_QUESTS = "started_side_quests";
+	private static final int LAST_JOURNAL_QUEST = 120;
 	public static final int FALSE_TRAIL = 901;
 	private static final HashSet<Integer> completedSideQuests = new HashSet<>();
+	private static final HashSet<Integer> startedSideQuests = new HashSet<>();
 	private static int completed;
 	private static boolean woodcutterHint;
 	private static boolean epilogue;
@@ -65,7 +71,32 @@ public final class CampaignQuest {
 	}
 
 	public static void recordVillageQuest(int quest) {
-		if (completedSideQuests.add(quest)) Notes.recordCampaignQuest(quest);
+		if (completedSideQuests.add(quest)) {
+			Notes.recordCampaignQuest(quest);
+			announceCompletion(quest);
+		}
+	}
+
+	public static void startSideQuest(int quest) {
+		if (CampaignSideQuest.get(quest) == null || !startedSideQuests.add(quest)) return;
+		if (quest > 1000) {
+			announceStart(quest - 1000);
+		} else if (quest <= LAST_JOURNAL_QUEST && quest != 9 && !reached(quest + 1000)) {
+			announceStart(quest);
+		}
+	}
+
+	public static void announceStart(int quest) {
+		GameScene.queueQuestNotice(journalTitle(quest, false), false);
+	}
+
+	private static void announceCompletion(int quest) {
+		GameScene.queueQuestNotice(journalTitle(quest, true), true);
+	}
+
+	public static void onFirstSurfaceArrival() {
+		announceCompletion(1);
+		if (completed == 0) announceStart(QUESTS[0]);
 	}
 
 	public static void hearWoodcutter() {
@@ -81,7 +112,8 @@ public final class CampaignQuest {
 		CampaignSideQuest side = CampaignSideQuest.get(quest);
 		if (side != null) {
 			completedSideQuests.add(quest);
-			if (quest <= 120) Notes.recordCampaignQuest(quest);
+			startedSideQuests.remove(quest);
+			if (quest <= LAST_JOURNAL_QUEST) Notes.recordCampaignQuest(quest);
 			if (quest == FALSE_TRAIL) {
 				Notes.remove(Notes.Landmark.PIE_DELIVERY, -2);
 				Notes.add(Notes.Landmark.PIE_DELIVERY, -1);
@@ -96,6 +128,10 @@ public final class CampaignQuest {
 		if (Dungeon.level instanceof OutdoorLevel) ((OutdoorLevel) Dungeon.level).campaignChanged();
 		if (side == null) giveSupplies(quest);
 		else side.award();
+
+		// The last main quest is only finished after the epilogue conversation.
+		if (quest <= LAST_JOURNAL_QUEST && quest != 110) announceCompletion(quest);
+		if (side == null && completed < QUESTS.length) announceStart(QUESTS[completed]);
 		return true;
 	}
 
@@ -126,11 +162,13 @@ public final class CampaignQuest {
 		if (!reached(110) || epilogue) return false;
 		epilogue = true;
 		Dungeon.win(YendorAmulet.class);
+		announceCompletion(110);
 		return true;
 	}
 
 	public static String journal() {
 		if (epilogue) return Messages.get(CampaignQuest.class, "epilogue");
+		if (completed == 0 && !reached(1)) return Messages.get(CampaignQuest.class, "prologue_carried");
 		if (completed == 1 && woodcutterHint) return Messages.get(CampaignQuest.class, "journal_1_hint");
 		return Messages.get(CampaignQuest.class, "journal_" + completed);
 	}
@@ -139,10 +177,96 @@ public final class CampaignQuest {
 		return Messages.get(CampaignQuest.class, reached(FALSE_TRAIL) ? "delivery_return" : "delivery_out");
 	}
 
+	public static int[] mainJournalQuests() {
+		return IntStream.concat(IntStream.of(1), Arrays.stream(QUESTS)).toArray();
+	}
+
+	public static int[] sideJournalQuests() {
+		return IntStream.rangeClosed(2, LAST_JOURNAL_QUEST)
+				.filter(quest -> quest <= 4 || CampaignSideQuest.get(quest) != null)
+				.toArray();
+	}
+
+	public static String journalTitle(int quest, boolean finished) {
+		if (!finished) {
+			int stage = Arrays.binarySearch(QUESTS, quest);
+			if (stage >= 0) {
+				if (quest == 110 && reached(110)) stage = QUESTS.length;
+				return Messages.get(CampaignQuest.class, "journal_title_" + stage);
+			}
+			int openingScene = quest + 1000;
+			if (!startedSideQuests.contains(quest)
+					&& (startedSideQuests.contains(openingScene) || reached(openingScene))) {
+				return sceneText(openingScene, "name");
+			}
+		}
+		switch (quest) {
+			case 1: return Messages.get(CampaignQuest.class, "prologue_title");
+			case 5: return Messages.get(CampaignQuest.class, "amulet_title");
+			case 9: return Messages.get(Notes.Landmark.class, "pie_delivery");
+			default: return sceneText(quest, "name");
+		}
+	}
+
+	public static boolean journalCompleted(int quest) {
+		return quest == 110 ? epilogue : reached(quest);
+	}
+
+	public static String completedJournalText(int quest) {
+		switch (quest) {
+			case 1: return Messages.get(CampaignQuest.class, "prologue_done");
+			case 5: return Messages.get(CampaignQuest.class, "amulet_done");
+			case 110: return sceneText(quest, "done") + "\n\n" + journal();
+			default: return sceneText(quest, "done");
+		}
+	}
+
+	// A null entry is still hidden in the journal.
+	public static String activeJournalText(int quest) {
+		if (quest == 1) {
+			boolean hasAmulet = Dungeon.hero.belongings.getItem(YendorAmulet.class) != null;
+			return Messages.get(CampaignQuest.class, hasAmulet ? "prologue_carried" : "prologue_active");
+		}
+		if (quest == 110 && reached(110)) return journal();
+		if (completed < QUESTS.length && QUESTS[completed] == quest && reached(1)) return journal();
+
+		switch (quest) {
+			case 2:
+				return villageNote(Notes.Landmark.GRANDMOTHER_BERRIES, Notes.Landmark.GRANDMOTHER_FLOUR,
+						Notes.Landmark.GRANDMOTHER);
+			case 3:
+				return villageNote(Notes.Landmark.HANDCART);
+			case 4:
+				return villageNote(Notes.Landmark.HAY_REWARD, Notes.Landmark.HAY_FIELD);
+			case 9:
+				return Notes.contains(Notes.Landmark.PIE_DELIVERY, -2)
+						|| Notes.contains(Notes.Landmark.PIE_DELIVERY, -1) ? deliveryNote() : null;
+		}
+
+		if (startedSideQuests.contains(quest)) return sceneText(quest, "desc");
+		// The opening scene for a multi-stage side quest uses the same ID plus 1000.
+		int openingScene = quest + 1000;
+		if (reached(openingScene)) return sceneText(openingScene, "done");
+		if (startedSideQuests.contains(openingScene)) return sceneText(openingScene, "desc");
+		return null;
+	}
+
+	private static String villageNote(Notes.Landmark... landmarks) {
+		for (Notes.Landmark landmark : landmarks) {
+			if (Notes.contains(landmark, 0)) return new Notes.LandmarkRecord(landmark, 0).desc();
+		}
+		return null;
+	}
+
+	private static String sceneText(int quest, String key) {
+		return Messages.get(CampaignNPC.class, "q" + quest + "_" + key);
+	}
+
 	public static void reset() {
 		completed = 0;
 		woodcutterHint = false;
 		completedSideQuests.clear();
+		startedSideQuests.clear();
 		epilogue = false;
 	}
 
@@ -150,6 +274,7 @@ public final class CampaignQuest {
 		bundle.put(STAGE, completed == 0 ? 0 : QUESTS[completed - 1]);
 		bundle.put(WOODCUTTER_HINT, woodcutterHint);
 		bundle.put("side_quests", completedSideQuests.stream().mapToInt(Integer::intValue).toArray());
+		bundle.put(STARTED_SIDE_QUESTS, startedSideQuests.stream().mapToInt(Integer::intValue).toArray());
 		bundle.put("epilogue", epilogue);
 	}
 
@@ -160,6 +285,10 @@ public final class CampaignQuest {
 		int[] sideQuests = bundle.contains("side_quests") ? bundle.getIntArray("side_quests") : null;
 		if (sideQuests != null) {
 			for (int quest : sideQuests) completedSideQuests.add(quest);
+		}
+		startedSideQuests.clear();
+		if (bundle.contains(STARTED_SIDE_QUESTS)) {
+			for (int quest : bundle.getIntArray(STARTED_SIDE_QUESTS)) startedSideQuests.add(quest);
 		}
 		epilogue = bundle.getBoolean("epilogue");
 	}

@@ -114,7 +114,9 @@ public class Grandmother extends NPC {
 				if (index == 0) {
 					PieParcel parcel = new PieParcel();
 					if (parcel.collect()) {
-						Notes.add(Notes.Landmark.PIE_DELIVERY, -2);
+						if (Notes.add(Notes.Landmark.PIE_DELIVERY, -2) && !CampaignQuest.reached(CampaignQuest.FALSE_TRAIL)) {
+							CampaignQuest.announceStart(9);
+						}
 						GameScene.show(new WndQuest(Grandmother.this, Messages.get(Grandmother.this, "parcel_reply")));
 					} else {
 						GameScene.show(new WndQuest(Grandmother.this, Messages.get(Grandmother.this, "no_space")));
@@ -174,6 +176,7 @@ public class Grandmother extends NPC {
 		}
 		stage = Stage.WATER;
 		Notes.add(landmark());
+		CampaignQuest.announceStart(2);
 		GLog.i(Messages.capitalize(Messages.get(Dungeon.hero, "you_now_have", bucket.name())));
 		GameScene.show(new WndQuest(this, Messages.get(this, "accepted")));
 	}

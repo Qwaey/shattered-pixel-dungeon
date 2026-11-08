@@ -104,6 +104,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.LootIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.MenuPane;
+import com.shatteredpixel.shatteredpixeldungeon.ui.QuestBanner;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ResumeIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RightClickMenu;
@@ -159,10 +160,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameScene extends PixelScene {
 
 	static GameScene scene;
+
+	// Keep notices through section transitions and scene recreation for the same hero.
+	private static final ConcurrentLinkedQueue<QuestNotice> questNotices = new ConcurrentLinkedQueue<>();
+	private QuestBanner questBanner;
+
+	private static final class QuestNotice {
+		final Hero hero;
+		final String title;
+		final boolean completed;
+
+		QuestNotice(Hero hero, String title, boolean completed) {
+			this.hero = hero;
+			this.title = title;
+			this.completed = completed;
+		}
+	}
 
 	private SkinnedBlock water;
 	private DungeonTerrainTilemap tiles;
@@ -890,6 +908,7 @@ public class GameScene extends PixelScene {
 		}
 
 		super.update();
+		updateQuestBanner();
 
 		if (notifyDelay > 0) notifyDelay -= Game.elapsed;
 
@@ -1164,6 +1183,37 @@ public class GameScene extends PixelScene {
 		banner.y = align( uiCamera, (uiCamera.height - banner.height) / 2 - 32 - offset );
 
 		addToFront( banner );
+	}
+
+	public static void queueQuestNotice(String title, boolean completed) {
+		Hero hero = Dungeon.hero;
+		if (hero != null) questNotices.add(new QuestNotice(hero, title, completed));
+	}
+
+	private void updateQuestBanner() {
+		QuestNotice notice = questNotices.peek();
+		while (notice != null && notice.hero != Dungeon.hero) {
+			questNotices.poll();
+			notice = questNotices.peek();
+		}
+		if (notice == null) return;
+
+		if (showingWindow()) {
+			if (questBanner != null) questBanner.visible = false;
+			return;
+		}
+		if (questBanner == null) {
+			String label = Messages.get(this, notice.completed ? "quest_completed" : "quest_started");
+			questBanner = new QuestBanner(uiCamera, notice.title, label, notice.completed);
+			addToFront(questBanner);
+		}
+		questBanner.visible = true;
+		if (!questBanner.advance(Game.elapsed)) {
+			questBanner.killAndErase();
+			questBanner.destroy();
+			questBanner = null;
+			questNotices.poll();
+		}
 	}
 	
 	// -------------------------------------------------------
