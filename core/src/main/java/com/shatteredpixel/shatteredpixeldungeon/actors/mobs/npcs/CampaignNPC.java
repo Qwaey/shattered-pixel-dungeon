@@ -19,12 +19,13 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CampaignMarkerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CampaignPersonSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
 
-/** A stationary character or fixture for the first road quests. */
+/** A stationary character or fixture for a campaign quest. */
 public class CampaignNPC extends NPC {
 
 	private int quest;
@@ -40,14 +41,15 @@ public class CampaignNPC extends NPC {
 
 	private void setQuest(int quest) {
 		this.quest = quest;
-		switch (quest) {
-			case 9: case 16: case 17: case 31: case 33: case 34:
-			case 46: case 61: case 76: case 91: case 106:
-				spriteClass = CampaignPersonSprite.class;
-				break;
-			default:
-				spriteClass = CampaignMarkerSprite.class;
-		}
+		spriteClass = CampaignPersonSprite.hasPortrait(quest)
+				? CampaignPersonSprite.class : CampaignMarkerSprite.class;
+	}
+
+	@Override
+	public CharSprite sprite() {
+		if (spriteClass == CampaignPersonSprite.class) return new CampaignPersonSprite(quest);
+		if (spriteClass == CampaignMarkerSprite.class) return new CampaignMarkerSprite(quest);
+		return super.sprite();
 	}
 
 	public int quest() {
